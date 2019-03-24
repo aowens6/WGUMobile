@@ -23,6 +23,10 @@ import com.example.aowenswgumobile.database.DBHelper;
 import com.example.aowenswgumobile.database.DataSource;
 import com.example.aowenswgumobile.database.TermsTable;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
+
 import model.Term;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
   DataSource mDataSource;
   CursorAdapter termCursorAdapter;
   ListView termList;
+  Calendar calendar = Calendar.getInstance();
+
+  SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+  String formattedDate;
+  public static String programStartDate;
+  public static String currentTermStartDate;
+  public static String currentTermEndDate;
   private static final int MAIN_REQUEST_CODE = 1001;
   public static final String TAG = "MainActivity";
 
@@ -44,6 +55,13 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     if(!prefs.getBoolean("firstTime", false)) {
       mDataSource.initializeCourses();
+      calendar.set(2019,Calendar.JANUARY,1);
+      currentTermStartDate = dateFormat.format(calendar.getTime());
+      Log.d(TAG, "onCreate: calendar: " + currentTermStartDate);
+
+      calendar.add(Calendar.MONTH, 6);
+      currentTermEndDate = dateFormat.format(calendar.getTime());
+      Log.d(TAG, "onCreate: calendar: " + currentTermEndDate);
       SharedPreferences.Editor editor = prefs.edit();
       editor.putBoolean("firstTime", true);
       editor.commit();
@@ -61,17 +79,19 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
+    setTitle("Terms     Start        End");
+
   }
 
   public void populateTermLV(){
     mDataSource.open();
 
     Cursor cursor = mDataSource.getAllTerms();
-    String[] from = {TermsTable.TERM_TITLE};
-    int[] to = {android.R.id.text1};
+    String[] from = {TermsTable.TERM_TITLE, TermsTable.TERM_START, TermsTable.TERM_END};
+    int[] to = {R.id.textView1, R.id.textView2, R.id.textView3};
 
     termCursorAdapter = new SimpleCursorAdapter(this,
-            android.R.layout.simple_list_item_1, cursor, from, to, 0);
+            R.layout.termlistitem, cursor, from, to, 0);
 
     termList = findViewById(R.id.termList);
     termList.setAdapter(termCursorAdapter);
@@ -90,10 +110,23 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void addTerm(View view) {
-    Term term = new Term("Term " + (mDataSource.getTermsCount() + 1), "", "");
+
+    Log.d(TAG, "Start: " + currentTermStartDate);
+    Log.d(TAG, "end: " + currentTermEndDate);
+
+    Term term = new Term("Term " + (mDataSource.getTermsCount() + 1), currentTermStartDate, currentTermEndDate);
+
     mDataSource.createTerm(term);
     Log.d("MainActivity", "databaseCount: " + mDataSource.getTermsCount());
     populateTermLV();
+
+    calendar.add(Calendar.DAY_OF_MONTH, 1);
+    currentTermStartDate = dateFormat.format(calendar.getTime());
+//    Log.d(TAG, "onCreate: calendar: " + currentTermStartDate);
+
+    calendar.add(Calendar.MONTH, 6);
+    currentTermEndDate = dateFormat.format(calendar.getTime());
+//    Log.d(TAG, "onCreate: calendar: " + currentTermEndDate);
   }
 
   @Override

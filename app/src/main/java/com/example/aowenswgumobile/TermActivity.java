@@ -12,17 +12,24 @@ import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.aowenswgumobile.database.CourseTable;
 import com.example.aowenswgumobile.database.DataSource;
 import com.example.aowenswgumobile.database.TermsTable;
 
+import java.util.Calendar;
+
 public class TermActivity extends AppCompatActivity {
 
   DataSource mDataSource;
   CursorAdapter termCourseCursorAdapter;
   ListView termCourseList;
+  TextView startDate;
+  TextView endDate;
+  Cursor currentTerm;
+  Calendar calendar;
   private Button deleteTermBtn;
   private int termId;
   private static final int TERM_REQUEST_CODE = 1002;
@@ -43,6 +50,17 @@ public class TermActivity extends AppCompatActivity {
     if(uri != null){
       termId = Integer.parseInt(uri.getLastPathSegment());
       Log.d(TAG, "uri: " + uri.toString());
+      currentTerm = mDataSource.getTermById(Integer.toString(termId));
+      currentTerm.moveToFirst();
+      setTitle(currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE)));
+
+      startDate = findViewById(R.id.startDate);
+      startDate.setText(currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_START)));
+
+      endDate = findViewById(R.id.endDate);
+      endDate.setText(currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_END)));
+
+      Log.d(TAG, "termTitle: " + currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE)));
     }
 
     populateTermCourseList();
@@ -54,13 +72,13 @@ public class TermActivity extends AppCompatActivity {
       }
     });
 
-    deleteTermBtn = findViewById(R.id.deleteTermBtn);
-
-    if(termCourseList.getAdapter().getCount() == 0){
-      deleteTermBtn.setVisibility(View.VISIBLE);
-    }else{
-      deleteTermBtn.setVisibility(View.GONE);
-    }
+//    deleteTermBtn = findViewById(R.id.deleteTermBtn);
+//
+//    if(termCourseList.getAdapter().getCount() == 0){
+//      deleteTermBtn.setVisibility(View.VISIBLE);
+//    }else{
+//      deleteTermBtn.setVisibility(View.GONE);
+//    }
   }
 
   public void populateTermCourseList(){
@@ -77,11 +95,15 @@ public class TermActivity extends AppCompatActivity {
   }
 
   public void deleteTerm(View view) {
-    Log.d("termActivity", "lastURIsegment: " + termId);
-    mDataSource.deleteTerm(termId);
-    setResult(RESULT_OK);
-    finish();
-    Toast.makeText(this, "Term deleted", Toast.LENGTH_SHORT).show();
+    if(termCourseList.getAdapter().getCount() > 0){
+      Toast.makeText(this, "Terms with courses can't be deleted", Toast.LENGTH_SHORT).show();
+    }else{
+      Log.d("termActivity", "lastURIsegment: " + termId);
+      mDataSource.deleteTerm(termId);
+      setResult(RESULT_OK);
+      finish();
+      Toast.makeText(this, "Term deleted", Toast.LENGTH_SHORT).show();
+    }
   }
 
 

@@ -6,6 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".TermActivity">
 
+    <TextView
+        android:id="@+id/endText"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginRight="19dp"
+        android:layout_marginBottom="118dp"
+        android:text="End Date"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        app:layout_constraintBottom_toTopOf="@+id/termCourseList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/startText"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/addCourseBtn"
         android:layout_width="wrap_content"
@@ -22,14 +37,12 @@
         android:id="@+id/deleteTermBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="9dp"
+        android:layout_marginRight="9dp"
         android:onClick="deleteTerm"
         android:text="Delete Term"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/addCourseBtn"
-        app:layout_constraintTop_toBottomOf="@+id/termCourseList" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/addCourseBtn"
+        app:layout_constraintEnd_toStartOf="@+id/addCourseBtn" />
 
     <ListView
         android:id="@+id/termCourseList"
@@ -40,10 +53,53 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/deleteTermBtn"
+        android:layout_marginBottom="94dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/endText"
+        app:layout_constraintVertical_bias="0.892" />
+
+    <TextView
+        android:id="@+id/startText"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:text="Start Date"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        app:layout_constraintEnd_toStartOf="@+id/endText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/startDate"
+        android:layout_width="0dp"
+        android:layout_height="62dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="93dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="45dp"
+        app:layout_constraintBottom_toTopOf="@+id/termCourseList"
+        app:layout_constraintEnd_toStartOf="@+id/endDate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/endDate"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/startDate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/startDate"
+        app:layout_constraintTop_toTopOf="@+id/startDate" />
 
 </android.support.constraint.ConstraintLayout>

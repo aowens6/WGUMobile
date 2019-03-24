@@ -30,6 +30,12 @@ public class DataSource {
     return c;
   }
 
+  public Cursor getTermById(String termId){
+    Cursor c = mDatabase.query(TermsTable.TABLE_TERMS, TermsTable.ALL_TERM_COLUMNS,
+            TermsTable.TERM_ID + "=" + termId, null,null,null,null);
+    return c;
+  }
+
   public Term createTerm(Term term){
     ContentValues values = term.toValues();
     mDatabase.insert(TermsTable.TABLE_TERMS, null, values);
