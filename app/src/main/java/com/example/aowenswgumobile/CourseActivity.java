@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -39,7 +40,7 @@ public class CourseActivity extends AppCompatActivity {
 
     Intent intent = getIntent();
 
-    Uri uri = intent.getParcelableExtra(CourseTable.CONTENT_ITEM_TYPE);
+    Uri uri = intent.getParcelableExtra(TermsTable.CONTENT_ITEM_TYPE);
 
     if(uri != null){
       termId = Integer.parseInt(uri.getLastPathSegment());
@@ -47,6 +48,16 @@ public class CourseActivity extends AppCompatActivity {
     }
 
     populateCourseLV();
+    setTitle("Available Courses ");
+
+    courseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Log.d(TAG, "pos: " + position + " id = " + id);
+        mDataSource.updateCourse(Long.toString(id), termId);
+        populateCourseLV();
+      }
+    });
   }
 
   public void populateCourseLV(){
@@ -73,6 +84,7 @@ public class CourseActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
+    setResult(RESULT_OK);
     super.onBackPressed();
 //    Intent intent = new Intent(CourseActivity.this, TermActivity.class);
 //    Uri uri = Uri.parse(TermsTable.TERM_CONTENT_URI + "/" + termId);

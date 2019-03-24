@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
@@ -46,6 +47,13 @@ public class TermActivity extends AppCompatActivity {
 
     populateTermCourseList();
 
+    termCourseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Log.d(TAG, "pos: " + position + " id = " + id);
+      }
+    });
+
     deleteTermBtn = findViewById(R.id.deleteTermBtn);
 
     if(termCourseList.getAdapter().getCount() == 0){
@@ -82,5 +90,12 @@ public class TermActivity extends AppCompatActivity {
     Uri uri = Uri.parse(TermsTable.TERM_CONTENT_URI + "/" + termId);
     intent.putExtra(TermsTable.CONTENT_ITEM_TYPE,uri);
     startActivityForResult(intent, TERM_REQUEST_CODE);
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == TERM_REQUEST_CODE && resultCode == RESULT_OK) {
+      populateTermCourseList();
+    }
   }
 }
