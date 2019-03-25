@@ -68,7 +68,10 @@ public class TermActivity extends AppCompatActivity {
     termCourseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Log.d(TAG, "pos: " + position + " id = " + id);
+        Intent intent = new Intent(TermActivity.this, CourseDetailActivity.class);
+        Uri uri = Uri.parse(TermsTable.TERM_CONTENT_URI + "/" + id);
+        intent.putExtra(TermsTable.CONTENT_ITEM_TYPE,uri);
+        startActivityForResult(intent, TERM_REQUEST_CODE);
       }
     });
 

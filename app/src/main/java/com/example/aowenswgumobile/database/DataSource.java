@@ -7,6 +7,8 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 import model.Course;
 import model.Term;
 
@@ -16,6 +18,8 @@ public class DataSource {
 
   private SQLiteDatabase mDatabase;
   SQLiteOpenHelper mDbHelper;
+
+  public static ArrayList<Course> courses = new ArrayList<>();
 
   public DataSource(Context context) {
     this.mContext = context;
@@ -42,8 +46,8 @@ public class DataSource {
     return term;
   }
 
-  public long getTermsCount(){
-    return DatabaseUtils.queryNumEntries(mDatabase, TermsTable.TABLE_TERMS);
+  public int getTermsCount(){
+    return (int) DatabaseUtils.queryNumEntries(mDatabase, TermsTable.TABLE_TERMS);
   }
 
   public void deleteTerm(int termId){
@@ -59,20 +63,12 @@ public class DataSource {
   public Cursor getCoursesByTerm(String termId){
     Cursor c = mDatabase.query(CourseTable.TABLE_COURSES, CourseTable.ALL_COURSE_COLUMNS,
             CourseTable.COURSE_TERM_ID + "=" + termId,null, null,null,null);
-
     return c;
   }
 
-  public void createCourse(Course course){
+  public void insertCourse(Course course){
     ContentValues values = course.toValues();
     mDatabase.insert(CourseTable.TABLE_COURSES, null, values);
-  }
-
-  public void insertCourse(String courseName, int termId){
-    ContentValues values = new ContentValues();
-    values.put(CourseTable.COURSE_NAME, courseName);
-    values.put(CourseTable.COURSE_TERM_ID, termId);
-    mDatabase.insert(CourseTable.TABLE_COURSES,null, values);
   }
 
   public void updateCourse(String courseId, int termId){
@@ -82,18 +78,63 @@ public class DataSource {
             CourseTable.COURSE_ID + "=" + courseId, null);
   }
 
+  public void updateCourseStart(String courseId, String startDate){
+    ContentValues values = new ContentValues();
+    values.put(CourseTable.COURSE_START, startDate);
+    mDatabase.update(CourseTable.TABLE_COURSES, values,
+            CourseTable.COURSE_ID + "=" + courseId, null);
+  }
+
+  public void updateCourseEnd(String courseId, String endDate){
+    ContentValues values = new ContentValues();
+    values.put(CourseTable.COURSE_END, endDate);
+    mDatabase.update(CourseTable.TABLE_COURSES, values,
+            CourseTable.COURSE_ID + "=" + courseId, null);
+  }
+
+  public void updateCourseStatus(String courseId, int statusCode){
+    ContentValues values = new ContentValues();
+    values.put(CourseTable.COURSE_STATUS_CODE, statusCode);
+    mDatabase.update(CourseTable.TABLE_COURSES, values,
+            CourseTable.COURSE_ID + "=" + courseId, null);
+  }
+
+  public Cursor getCourseById(String courseId){
+    Cursor c = mDatabase.query(CourseTable.TABLE_COURSES, CourseTable.ALL_COURSE_COLUMNS,
+            CourseTable.COURSE_ID + "=" + courseId,null,null,null,null);
+
+    return c;
+  }
+
   public void initializeCourses(){
-    insertCourse("Organization",0);
-    insertCourse("SQL",0);
-    insertCourse("UX/UI",0);
-    insertCourse("Software Engineering",0);
-    insertCourse("Business",0);
-    insertCourse("IT Applications",0);
-    insertCourse("Software 1",1);
-    insertCourse("Software 2",1);
-    insertCourse("Mobile Apps",1);
-    insertCourse("Capstone",1);
-    insertCourse("IT Fundamentals",2);
+//    in progress, completed, dropped, plan to take
+    Course course1 = new Course("Organization", "", "", 1, 0, 1);
+    Course course2 = new Course("SQL", "", "", 1, 0,1);
+    Course course3 = new Course("UX/UI", "", "", 2, 0,2);
+    Course course4 = new Course("Software Engineering", "", "", 2, 0,3);
+    Course course5 = new Course("Business", "", "", 3, 0,3);
+    Course course6 = new Course("IT Applications", "", "", 3, 1,4);
+    Course course7 = new Course("Software 1", "", "", 4, 1,4);
+    Course course8 = new Course("Software 2", "", "", 4, 1,5);
+    Course course9 = new Course("Mobile Apps", "", "", 2, 1,5);
+    Course course10 = new Course("Capstone", "", "", 3, 2,5);
+    Course course11 = new Course("IT Fundamentals", "", "", 1, 3,5);
+
+    courses.add(course1);
+    courses.add(course2);
+    courses.add(course3);
+    courses.add(course4);
+    courses.add(course5);
+    courses.add(course6);
+    courses.add(course7);
+    courses.add(course8);
+    courses.add(course9);
+    courses.add(course10);
+    courses.add(course11);
+
+    for (Course course : courses){
+      insertCourse(course);
+    }
   }
 
   public void open(){
