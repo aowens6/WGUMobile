@@ -48,7 +48,7 @@ public class CourseActivity extends AppCompatActivity {
     }
 
     populateCourseLV();
-    setTitle("Available Courses ");
+    setTitle("Pending Courses");
 
     courseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override

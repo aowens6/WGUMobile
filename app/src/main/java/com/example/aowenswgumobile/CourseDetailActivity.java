@@ -1,19 +1,24 @@
 package com.example.aowenswgumobile;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +38,11 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   private DataSource mDataSource;
   private int courseId;
+  private int termId;
+  private String courseTitle;
+  private String termTitle;
   private Cursor currentCourse;
+  private Cursor currentTerm;
   private TextView startCourseDate;
   private TextView endCourseDate;
   private Spinner statusSpinner;
@@ -81,7 +90,17 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
       currentCourse = mDataSource.getCourseById(Integer.toString(courseId));
 
       currentCourse.moveToFirst();
-      setTitle(currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME)));
+      currentTerm = mDataSource.getTermById(currentCourse.getString(
+              currentCourse.getColumnIndex(CourseTable.COURSE_TERM_ID)));
+
+      currentTerm.moveToFirst();
+
+      courseTitle = currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME));
+      termTitle = currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE));
+      termId = currentTerm.getInt(currentTerm.getColumnIndex(TermsTable.TERM_ID));
+      Log.d(TAG, "onCreate: termId: " + termId);
+
+      setTitle(courseTitle);
 
       startCourseDate = findViewById(R.id.startCourseDate);
       endCourseDate = findViewById(R.id.endCourseDate);
@@ -102,10 +121,36 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == android.R.id.home) {
-      onBackPressed();
-      return true;
+    switch (item.getItemId()){
+      case android.R.id.home:
+        onBackPressed();
+        return true;
+      case R.id.deleteIcon:
+
+        final AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
+        myAlertDialog.setTitle("Confirm Delete");
+        myAlertDialog.setMessage("Delete " + courseTitle + " from " + termTitle + "?");
+        myAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+          public void onClick(DialogInterface arg0, int arg1) {
+            mDataSource.updateCourse(Integer.toString(courseId), 0);
+            Toast.makeText(CourseDetailActivity.this,
+                    courseTitle + " moved to pending courses", Toast.LENGTH_SHORT).show();
+          }
+        });
+
+        myAlertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+          public void onClick(DialogInterface arg0, int arg1) {
+            return;
+          }
+        });
+
+        myAlertDialog.show();
+
+        return true;
     }
+
     return false;
   }
 
@@ -143,6 +188,15 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
       endCourseDate.setText(currentDateString);
     }
   }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.course_detail_menu, menu);
+    return true;
+  }
+
+
 
   public void viewMentors(View view) {
     Intent intent = new Intent(CourseDetailActivity.this, MentorActivity.class);
