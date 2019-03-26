@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.aowenswgumobile.database.CourseTable;
 import com.example.aowenswgumobile.database.DataSource;
+import com.example.aowenswgumobile.database.MentorTable;
 import com.example.aowenswgumobile.database.TermsTable;
 
 import java.text.SimpleDateFormat;
@@ -38,6 +39,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   private Spinner statusSpinner;
   private boolean isStartDatePicker;
   private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+  private static final int COURSE_DETAIL_REQUEST_CODE = 1005;
   private static final String TAG = "CourseDetail";
 
   @Override
@@ -115,8 +117,6 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   @Override
   public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-    String text = adapterView.getItemAtPosition(position).toString();
-    Toast.makeText(adapterView.getContext(), text, Toast.LENGTH_SHORT).show();
     mDataSource.updateCourseStatus(Integer.toString(courseId), position);
   }
 
@@ -142,5 +142,12 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
       TextView endCourseDate = findViewById(R.id.endCourseDate);
       endCourseDate.setText(currentDateString);
     }
+  }
+
+  public void viewMentors(View view) {
+    Intent intent = new Intent(CourseDetailActivity.this, MentorActivity.class);
+    Uri uri = Uri.parse(MentorTable.MENTOR_CONTENT_URI + "/" + courseId);
+    intent.putExtra(MentorTable.CONTENT_ITEM_TYPE, uri);
+    startActivityForResult(intent, COURSE_DETAIL_REQUEST_CODE);
   }
 }

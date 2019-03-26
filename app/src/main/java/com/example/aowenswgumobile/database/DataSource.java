@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 
 import model.Course;
+import model.Mentor;
 import model.Term;
 
 public class DataSource {
@@ -107,7 +108,7 @@ public class DataSource {
   }
 
   public void initializeCourses(){
-//    in progress, completed, dropped, plan to take
+
     Course course1 = new Course("Organization", "", "", 1, 0, 1);
     Course course2 = new Course("SQL", "", "", 1, 0,1);
     Course course3 = new Course("UX/UI", "", "", 2, 0,2);
@@ -135,6 +136,48 @@ public class DataSource {
     for (Course course : courses){
       insertCourse(course);
     }
+  }
+
+  public void insertMentor(Mentor mentor){
+    ContentValues values = mentor.toValues();
+    mDatabase.insert(MentorTable.TABLE_MENTORS, null, values);
+  }
+
+  public Cursor getMentorsByCode(String mentorCode){
+    Cursor c = mDatabase.query(MentorTable.TABLE_MENTORS, MentorTable.ALL_MENTOR_COLUMNS,
+            MentorTable.MENTOR_CODE + "=" + mentorCode, null, null, null, null);
+    return c;
+  }
+
+  public void initializeMentors(){
+
+    ArrayList<Mentor> mentors = new ArrayList<>();
+    Mentor mentor1 = new Mentor("David", "555-333-1111", "david@wgu.com", 5);
+    Mentor mentor2 = new Mentor("Ellen", "555-333-1112", "ellen@wgu.com", 4);
+    Mentor mentor3 = new Mentor("Sharon", "555-333-1113", "sharon@wgu.com", 3);
+    Mentor mentor4 = new Mentor("Mike", "555-333-1114", "mike@wgu.com", 2);
+    Mentor mentor5 = new Mentor("Donna", "555-333-1115", "donna@wgu.com", 1);
+    Mentor mentor6 = new Mentor("Anna", "555-333-1116", "anna@wgu.com", 5);
+    Mentor mentor7 = new Mentor("Shawn", "555-333-1117", "shawn@wgu.com", 4);
+    Mentor mentor8 = new Mentor("Clarence", "555-333-1118", "clarence@wgu.com", 4);
+    Mentor mentor9 = new Mentor("Vern", "555-333-1119", "vern@wgu.com", 2);
+    Mentor mentor10 = new Mentor("Wanda", "555-333-1100", "wanda@wgu.com", 1);
+
+    mentors.add(mentor1);
+    mentors.add(mentor2);
+    mentors.add(mentor3);
+    mentors.add(mentor4);
+    mentors.add(mentor5);
+    mentors.add(mentor6);
+    mentors.add(mentor7);
+    mentors.add(mentor8);
+    mentors.add(mentor9);
+    mentors.add(mentor10);
+
+    for (Mentor mentor : mentors) {
+      insertMentor(mentor);
+    }
+
   }
 
   public void open(){

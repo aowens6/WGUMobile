@@ -2,8 +2,6 @@ package com.example.aowenswgumobile.database;
 
 import android.net.Uri;
 
-import model.CourseMentor;
-
 public class CourseTable {
 
   private static final String AUTHORITY = "com.example.aowenswgumobile";

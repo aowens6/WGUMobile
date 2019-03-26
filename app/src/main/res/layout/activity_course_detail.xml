@@ -93,4 +93,36 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/endCourseDate"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <Button
+        android:id="@+id/mentorsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="204dp"
+        android:text="Mentors"
+        android:onClick="viewMentors"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/notesBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="112dp"
+        android:layout_marginLeft="112dp"
+        android:text="Notes"
+        app:layout_constraintBaseline_toBaselineOf="@+id/mentorsBtn"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/assessmentsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="208dp"
+        android:layout_marginLeft="208dp"
+        android:text="Assessments"
+        app:layout_constraintBaseline_toBaselineOf="@+id/notesBtn"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

@@ -19,13 +19,14 @@ public class DBHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase db) {
     db.execSQL(TermsTable.TABLE_CREATE_TERMS);
     db.execSQL(CourseTable.TABLE_CREATE_COURSES);
-
+    db.execSQL(MentorTable.TABLE_CREATE_MENTORS);
   }
 
   @Override
   public void onUpgrade(SQLiteDatabase db, int i, int i1) {
     db.execSQL("DROP TABLE IF EXISTS " + TermsTable.TABLE_TERMS);
     db.execSQL("DROP TABLE IF EXISTS " + CourseTable.TABLE_COURSES);
+    db.execSQL("DROP TABLE IF EXISTS " + MentorTable.TABLE_MENTORS);
     onCreate(db);
   }
 

@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     if(!prefs.getBoolean("firstTime", false)) {
       mDataSource.initializeCourses();
+      mDataSource.initializeMentors();
       SharedPreferences.Editor editor = prefs.edit();
       editor.putBoolean("firstTime", true);
       editor.commit();
@@ -66,10 +67,10 @@ public class MainActivity extends AppCompatActivity {
     termList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Intent intent = new Intent(MainActivity.this, TermActivity.class);
-        Uri uri = Uri.parse(TermsTable.TERM_CONTENT_URI + "/" + id);
-        intent.putExtra(TermsTable.CONTENT_ITEM_TYPE,uri);
-        startActivityForResult(intent, MAIN_REQUEST_CODE);
+      Intent intent = new Intent(MainActivity.this, TermActivity.class);
+      Uri uri = Uri.parse(TermsTable.TERM_CONTENT_URI + "/" + id);
+      intent.putExtra(TermsTable.CONTENT_ITEM_TYPE,uri);
+      startActivityForResult(intent, MAIN_REQUEST_CODE);
       }
     });
 
