@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    setTitle("Terms     Start        End");
+    setTitle("Terms");
 
   }
 
@@ -83,10 +83,10 @@ public class MainActivity extends AppCompatActivity {
 
     Cursor cursor = mDataSource.getAllTerms();
     String[] from = {TermsTable.TERM_TITLE, TermsTable.TERM_START, TermsTable.TERM_END};
-    int[] to = {R.id.textView1, R.id.textView2, R.id.textView3};
+    int[] to = {R.id.termTitle, R.id.startDateListTxt, R.id.endDateListTxt};
 
     termCursorAdapter = new SimpleCursorAdapter(this,
-            R.layout.termlistitem, cursor, from, to, 0);
+            R.layout.term_list_item, cursor, from, to, 0);
 
     termList = findViewById(R.id.termList);
     termList.setAdapter(termCursorAdapter);
