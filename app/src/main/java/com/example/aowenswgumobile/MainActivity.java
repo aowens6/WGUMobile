@@ -25,25 +25,21 @@ import com.example.aowenswgumobile.database.TermsTable;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 import model.Term;
 
 public class MainActivity extends AppCompatActivity {
 
-  DataSource mDataSource;
-  CursorAdapter termCursorAdapter;
-  ListView termList;
-  Calendar startCalendar = Calendar.getInstance();
-  Calendar endCalendar = Calendar.getInstance();
-
-  SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-  String formattedDate;
-  public static String programStartDate;
-  public static String currentTermStartDate;
-  public static String currentTermEndDate;
+  private DataSource mDataSource;
+  private CursorAdapter termCursorAdapter;
+  private ListView termList;
+  private DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+  private static String currentTermStartDate;
+  private static String currentTermEndDate;
   private static final int MAIN_REQUEST_CODE = 1001;
-  public static final String TAG = "MainActivity";
+  private static final String TAG = "MainActivity";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
     });
 
     setTitle("Terms");
+
+
 
   }
 
@@ -108,24 +106,23 @@ public class MainActivity extends AppCompatActivity {
 
     int termCount = mDataSource.getTermsCount();
 
-    startCalendar.set(2019,Calendar.JANUARY,1);
-    endCalendar.set(2019,Calendar.JULY,1);
+    LocalDate startDate = LocalDate.of(2019, 1,1);
+    LocalDate endDate = LocalDate.of(2019,7,1);
 
     if (termCount == 0) {
-      currentTermStartDate = dateFormat.format(startCalendar.getTime());
-      currentTermEndDate = dateFormat.format(endCalendar.getTime());
+      currentTermStartDate = dateFormat.format(startDate);
+      currentTermEndDate = dateFormat.format(endDate);
     }else{
-      startCalendar.add(Calendar.MONTH, (termCount * 6));
-      currentTermStartDate = dateFormat.format(startCalendar.getTime());
+      startDate = startDate.plusMonths(termCount * 6).plusDays(1);
+      currentTermStartDate = startDate.format(dateFormat);
 
-      endCalendar.add(Calendar.MONTH, (termCount * 6));
-      currentTermEndDate = dateFormat.format(endCalendar.getTime());
+      endDate = endDate.plusMonths(termCount * 6);
+      currentTermEndDate = endDate.format(dateFormat);
     }
 
     Term term = new Term("Term " + (termCount + 1), currentTermStartDate, currentTermEndDate);
 
     mDataSource.createTerm(term);
-    Log.d("MainActivity", "databaseCount: " + mDataSource.getTermsCount());
     populateTermLV();
   }
 
