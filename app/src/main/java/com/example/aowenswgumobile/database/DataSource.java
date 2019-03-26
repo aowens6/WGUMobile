@@ -180,6 +180,13 @@ public class DataSource {
 
   }
 
+  public Cursor getNotesByCourseId(String courseId){
+    Cursor c = mDatabase.query(NotesTable.TABLE_NOTES, NotesTable.ALL_NOTES_COLUMNS,
+            NotesTable.NOTE_COURSE_ID + "=" + courseId,
+            null, null, null, null);
+    return c;
+  }
+
   public void open(){
     mDatabase = mDbHelper.getWritableDatabase();
   }

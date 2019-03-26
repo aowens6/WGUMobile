@@ -111,6 +111,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="104dp"
         android:text="Notes"
+        android:onClick="viewNotes"
         app:layout_constraintBaseline_toBaselineOf="@+id/mentorsBtn"
         app:layout_constraintStart_toStartOf="parent" />
 

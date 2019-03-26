@@ -8,4 +8,5 @@
         <item>Dropped</item>
         <item>Pending</item>
     </string-array>
+    <string name="title_activity_edit_note">EditNoteActivity</string>
 </resources>

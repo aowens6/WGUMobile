@@ -10,6 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".NotesActivity"
+            android:parentActivityName=".CourseDetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.aowenswgumobile.CourseDetailActivity" />
+        </activity>
+        <activity
             android:name=".MentorActivity"
             android:parentActivityName=".CourseDetailActivity">
             <meta-data

@@ -20,6 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
     db.execSQL(TermsTable.TABLE_CREATE_TERMS);
     db.execSQL(CourseTable.TABLE_CREATE_COURSES);
     db.execSQL(MentorTable.TABLE_CREATE_MENTORS);
+    db.execSQL(NotesTable.TABLE_CREATE_NOTES);
   }
 
   @Override
@@ -27,6 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
     db.execSQL("DROP TABLE IF EXISTS " + TermsTable.TABLE_TERMS);
     db.execSQL("DROP TABLE IF EXISTS " + CourseTable.TABLE_COURSES);
     db.execSQL("DROP TABLE IF EXISTS " + MentorTable.TABLE_MENTORS);
+    db.execSQL("DROP TABLE IF EXISTS " + NotesTable.TABLE_NOTES);
     onCreate(db);
   }
 
