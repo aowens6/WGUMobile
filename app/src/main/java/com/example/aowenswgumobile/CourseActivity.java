@@ -26,6 +26,7 @@ public class CourseActivity extends AppCompatActivity {
   DataSource mDataSource;
   CursorAdapter courseCursorAdapter;
   ListView courseList;
+  private Bundle extras;
   int termId;
   private static final int COURSE_REQUEST_CODE = 1003;
   public static final String TAG = "CourseActivity";
@@ -40,11 +41,15 @@ public class CourseActivity extends AppCompatActivity {
 
     Intent intent = getIntent();
 
-    Uri uri = intent.getParcelableExtra(TermsTable.CONTENT_ITEM_TYPE);
-
-    if(uri != null){
-      termId = Integer.parseInt(uri.getLastPathSegment());
-      Log.d(TAG, "uri: " + uri.toString());
+//    Uri uri = intent.getParcelableExtra(TermsTable.CONTENT_ITEM_TYPE);
+//
+//    if(uri != null){
+//      termId = Integer.parseInt(uri.getLastPathSegment());
+//      Log.d(TAG, "uri: " + uri.toString());
+//    }
+    extras = intent.getExtras();
+    if (extras != null) {
+      termId = extras.getInt("termId");
     }
 
     populateCourseLV();
@@ -53,8 +58,8 @@ public class CourseActivity extends AppCompatActivity {
     courseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Log.d(TAG, "pos: " + position + " id = " + id);
-        mDataSource.updateCourse(Long.toString(id), termId);
+        Log.d(TAG, "pos: " + position + " id = " + id + " term: " + termId);
+        mDataSource.updateCourseTerm(Long.toString(id), termId);
         populateCourseLV();
       }
     });

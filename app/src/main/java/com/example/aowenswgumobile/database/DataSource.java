@@ -79,7 +79,13 @@ public class DataSource {
     mDatabase.insert(CourseTable.TABLE_COURSES, null, values);
   }
 
-  public void updateCourse(String courseId, int termId){
+  public void updateCourse(Course course, String courseId){
+    ContentValues values = course.toValues();
+    mDatabase.update(CourseTable.TABLE_COURSES, values,
+            CourseTable.COURSE_ID + "=" + courseId, null);
+  }
+
+  public void updateCourseTerm(String courseId, int termId){
     ContentValues values = new ContentValues();
     values.put(CourseTable.COURSE_TERM_ID, termId);
     mDatabase.update(CourseTable.TABLE_COURSES, values,

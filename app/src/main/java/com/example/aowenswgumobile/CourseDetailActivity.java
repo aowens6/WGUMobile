@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,22 +33,27 @@ import com.example.aowenswgumobile.database.TermsTable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import model.Course;
 import model.DatePickerFragment;
 
 public class CourseDetailActivity extends AppCompatActivity
 implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListener {
 
   private DataSource mDataSource;
+  private Bundle extras;
   private int courseId;
   private int termId;
   private String courseTitle;
   private String termTitle;
   private Cursor currentCourse;
   private Cursor currentTerm;
+  private TextView titleFld;
   private TextView startCourseDate;
   private TextView endCourseDate;
   private Spinner statusSpinner;
+  private FloatingActionButton pendingFAB;
   private boolean isStartDatePicker;
+  private boolean isNewCourse;
   private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
   private static final int COURSE_DETAIL_REQUEST_CODE = 1005;
   private static final String TAG = "CourseDetail";
@@ -61,8 +67,20 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     mDataSource.open();
 
     Intent intent = getIntent();
+    extras = intent.getExtras();
 
-    Uri uri = intent.getParcelableExtra(TermsTable.CONTENT_ITEM_TYPE);
+    titleFld = findViewById(R.id.titleFld);
+    startCourseDate = findViewById(R.id.startCourseDate);
+    endCourseDate = findViewById(R.id.endCourseDate);
+    statusSpinner = findViewById(R.id.statusSpinner);
+    pendingFAB = findViewById(R.id.pendingFAB);
+
+    ArrayAdapter<CharSequence> spinnerAdapter =
+            ArrayAdapter.createFromResource(this, R.array.statuses, android.R.layout.simple_spinner_item);
+    spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    statusSpinner.setAdapter(spinnerAdapter);
+    statusSpinner.setOnItemSelectedListener(this);
+
 
     Button startCourseDateBtn = findViewById(R.id.startCourseDateBtn);
     startCourseDateBtn.setOnClickListener(new View.OnClickListener() {
@@ -84,39 +102,36 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
       }
     });
 
-    if(uri != null) {
-      courseId = Integer.parseInt(uri.getLastPathSegment());
-      Log.d(TAG, "courseID: " + courseId);
+    if(extras != null) {
+      courseId = extras.getInt("courseId");
+      termId = extras.getInt("termId");
+//      Log.d(TAG, "courseID: " + courseId);
 
-      currentCourse = mDataSource.getCourseById(Integer.toString(courseId));
+      if(courseId == 0){
+        isNewCourse = true;
+        setTitle("Add new course");
+      }else{
+        currentCourse = mDataSource.getCourseById(Integer.toString(courseId));
 
-      currentCourse.moveToFirst();
-      currentTerm = mDataSource.getTermById(currentCourse.getString(
-              currentCourse.getColumnIndex(CourseTable.COURSE_TERM_ID)));
+        currentCourse.moveToFirst();
+        currentTerm = mDataSource.getTermById(currentCourse.getString(
+                currentCourse.getColumnIndex(CourseTable.COURSE_TERM_ID)));
 
-      currentTerm.moveToFirst();
+        currentTerm.moveToFirst();
 
-      courseTitle = currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME));
-      termTitle = currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE));
-      termId = currentTerm.getInt(currentTerm.getColumnIndex(TermsTable.TERM_ID));
-      Log.d(TAG, "onCreate: termId: " + termId);
+        courseTitle = currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME));
+        termTitle = currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE));
+//        termId = currentTerm.getInt(currentTerm.getColumnIndex(TermsTable.TERM_ID));
+        Log.d(TAG, "onCreate: termId: " + termId + "  courseId: " + courseId);
 
-      setTitle(courseTitle);
+        setTitle("Edit " + courseTitle);
 
-      startCourseDate = findViewById(R.id.startCourseDate);
-      endCourseDate = findViewById(R.id.endCourseDate);
-      statusSpinner = findViewById(R.id.statusSpinner);
-
-      ArrayAdapter<CharSequence> spinnerAdapter =
-              ArrayAdapter.createFromResource(this, R.array.statuses, android.R.layout.simple_spinner_item);
-      spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-      statusSpinner.setAdapter(spinnerAdapter);
-      statusSpinner.setOnItemSelectedListener(this);
-      statusSpinner.setSelection(currentCourse.getInt(currentCourse.getColumnIndex(CourseTable.COURSE_STATUS_CODE)));
-
-      startCourseDate.setText(currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_START)));
-      endCourseDate.setText(currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_END)));
-
+        titleFld.setText(courseTitle);
+        startCourseDate.setText(currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_START)));
+        endCourseDate.setText(currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_END)));
+        statusSpinner.setSelection(currentCourse.getInt(currentCourse.getColumnIndex(CourseTable.COURSE_STATUS_CODE)));
+        pendingFAB.hide();
+      }
     }
   }
 
@@ -134,9 +149,11 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
         myAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
           public void onClick(DialogInterface arg0, int arg1) {
-            mDataSource.updateCourse(Integer.toString(courseId), 0);
+            mDataSource.updateCourseTerm(Integer.toString(courseId), 0);
             Toast.makeText(CourseDetailActivity.this,
                     courseTitle + " moved to pending courses", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            finish();
           }
         });
 
@@ -192,12 +209,12 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.course_detail_menu, menu);
+    if(!isNewCourse){
+      MenuInflater inflater = getMenuInflater();
+      inflater.inflate(R.menu.course_detail_menu, menu);
+    }
     return true;
   }
-
-
 
   public void viewMentors(View view) {
     Intent intent = new Intent(CourseDetailActivity.this, MentorActivity.class);
@@ -210,6 +227,90 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     Intent intent = new Intent(CourseDetailActivity.this, NotesActivity.class);
     Uri uri = Uri.parse(NotesTable.NOTES_CONTENT_URI + "/" + courseId);
     intent.putExtra(NotesTable.CONTENT_ITEM_TYPE, uri);
+    startActivityForResult(intent, COURSE_DETAIL_REQUEST_CODE);
+  }
+
+  public boolean isValidData(){
+//    titleFld
+//    startCourseDate
+//    endCourseDate
+//    statusSpinner
+    if(titleFld.getText().length() == 0){
+      final AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
+      myAlertDialog.setTitle("Missing course title");
+      myAlertDialog.setMessage("Please add course title");
+      myAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface arg0, int arg1) {return;}});
+
+      myAlertDialog.show();
+
+      return false;
+    }
+
+    if(startCourseDate.getText().length() == 0){
+      final AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
+      myAlertDialog.setTitle("Missing start date");
+      myAlertDialog.setMessage("Please add start date");
+      myAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface arg0, int arg1) {return;}});
+
+      myAlertDialog.show();
+
+      return false;
+    }
+
+    if(endCourseDate.getText().length() == 0){
+      final AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
+      myAlertDialog.setTitle("Missing end date");
+      myAlertDialog.setMessage("Please add end date");
+      myAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface arg0, int arg1) {return;}});
+
+      myAlertDialog.show();
+
+      return false;
+    }
+
+    if(statusSpinner.getSelectedItemPosition() == 0 ||
+       statusSpinner.getSelectedItem() == null){
+      final AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
+      myAlertDialog.setTitle("Missing status");
+      myAlertDialog.setMessage("Please add a status");
+      myAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface arg0, int arg1) {return;}});
+
+      myAlertDialog.show();
+
+      return false;
+    }
+
+    return true;
+  }
+
+  public void saveCourse(View view) {
+
+    if(isValidData()){
+      Course course = new Course(titleFld.getText().toString(),
+              startCourseDate.getText().toString(),
+              endCourseDate.getText().toString(),
+              statusSpinner.getSelectedItemPosition(),
+              termId, 3);
+
+      if(isNewCourse){
+        mDataSource.insertCourse(course);
+      }else{
+        mDataSource.updateCourse(course, Integer.toString(courseId));
+      }
+
+      setResult(RESULT_OK);
+      finish();
+    }
+
+  }
+
+  public void addPendingCourse(View view) {
+    Intent intent = new Intent(CourseDetailActivity.this, CourseActivity.class);
+    intent.putExtra("termId", termId);
     startActivityForResult(intent, COURSE_DETAIL_REQUEST_CODE);
   }
 }

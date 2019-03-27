@@ -67,8 +67,8 @@ public class TermActivity extends AppCompatActivity
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Intent intent = new Intent(TermActivity.this, CourseDetailActivity.class);
-        Uri uri = Uri.parse(TermsTable.TERM_CONTENT_URI + "/" + id);
-        intent.putExtra(TermsTable.CONTENT_ITEM_TYPE,uri);
+        intent.putExtra("courseId", ((int) id));
+        intent.putExtra("termId", termId);
         startActivityForResult(intent, TERM_REQUEST_CODE);
       }
     });
@@ -121,9 +121,9 @@ public class TermActivity extends AppCompatActivity
 
 
   public void addCourse(View view) {
-    Intent intent = new Intent(TermActivity.this, CourseActivity.class);
-    Uri uri = Uri.parse(TermsTable.TERM_CONTENT_URI + "/" + termId);
-    intent.putExtra(TermsTable.CONTENT_ITEM_TYPE,uri);
+    Intent intent = new Intent(TermActivity.this, CourseDetailActivity.class);
+    intent.putExtra("termId", termId);
+    intent.putExtra("courseId", 0);
     startActivityForResult(intent, TERM_REQUEST_CODE);
   }
 
