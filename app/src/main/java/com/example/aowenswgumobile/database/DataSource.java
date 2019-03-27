@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import model.Course;
 import model.Mentor;
+import model.Note;
 import model.Term;
 
 public class DataSource {
@@ -185,6 +186,28 @@ public class DataSource {
             NotesTable.NOTE_COURSE_ID + "=" + courseId,
             null, null, null, null);
     return c;
+  }
+
+  public Cursor getNoteByNoteId(String noteId){
+    Cursor c = mDatabase.query(NotesTable.TABLE_NOTES, NotesTable.ALL_NOTES_COLUMNS,
+            NotesTable.NOTE_ID + "=" + noteId, null, null, null,null);
+    return c;
+  }
+
+  public void insertNote(Note note){
+    ContentValues values = note.toValues();
+    mDatabase.insert(NotesTable.TABLE_NOTES, null, values);
+  }
+
+  public void updateNote(String newText, String noteId){
+    ContentValues values = new ContentValues();
+    values.put(NotesTable.NOTE_TEXT, newText);
+    mDatabase.update(NotesTable.TABLE_NOTES, values,
+            NotesTable.NOTE_ID + "=" + noteId,null);
+  }
+
+  public void deleteNote(String noteId){
+    mDatabase.delete(NotesTable.TABLE_NOTES, NotesTable.NOTE_ID + "=" + noteId,null);
   }
 
   public void open(){

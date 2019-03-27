@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -22,7 +23,9 @@ public class NotesActivity extends AppCompatActivity {
   private DataSource mDataSource;
   private int courseId;
   private Cursor currentCourse;
+  private ListView notesList;
   private static final String TAG = "NotesActivity";
+  private static final int NOTE_REQUEST_CODE = 1006;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,18 @@ public class NotesActivity extends AppCompatActivity {
       currentCourse.moveToFirst();
     }
     populateNotesList();
+
+    notesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Intent intent = new Intent(NotesActivity.this, EditNoteActivity.class);
+        intent.putExtra("noteId", id);
+        intent.putExtra("courseId", courseId);
+        startActivityForResult(intent, NOTE_REQUEST_CODE);
+
+      }
+    });
+
     setTitle("Notes for " + currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME)));
   }
 
@@ -54,7 +69,8 @@ public class NotesActivity extends AppCompatActivity {
     CursorAdapter notesCursorAdapter = new SimpleCursorAdapter(this,
             android.R.layout.simple_list_item_1, cursor, from, to, 0);
 
-    ListView notesList = findViewById(R.id.notesLV);
+
+    notesList = findViewById(R.id.notesLV);
     notesList.setAdapter(notesCursorAdapter);
   }
 
@@ -74,6 +90,16 @@ public class NotesActivity extends AppCompatActivity {
   }
 
   public void addNote(View view) {
+    Intent intent = new Intent(NotesActivity.this, EditNoteActivity.class);
+    intent.putExtra("noteId", 0);
+    intent.putExtra("courseId", courseId);
+    startActivityForResult(intent, NOTE_REQUEST_CODE);
+  }
 
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == NOTE_REQUEST_CODE && resultCode == RESULT_OK) {
+      populateNotesList();
+    }
   }
 }
