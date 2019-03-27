@@ -42,10 +42,16 @@ public class DataSource {
     return c;
   }
 
-  public Term createTerm(Term term){
+  public Term insertTerm(Term term){
     ContentValues values = term.toValues();
     mDatabase.insert(TermsTable.TABLE_TERMS, null, values);
     return term;
+  }
+
+  public void updateTerm(String termId, Term term){
+    ContentValues values = term.toValues();
+    mDatabase.update(TermsTable.TABLE_TERMS, values,
+            TermsTable.TERM_ID + "=" + termId, null);
   }
 
   public int getTermsCount(){

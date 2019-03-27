@@ -6,10 +6,14 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -21,7 +25,8 @@ import com.example.aowenswgumobile.database.TermsTable;
 
 import java.util.Calendar;
 
-public class TermActivity extends AppCompatActivity {
+public class TermActivity extends AppCompatActivity
+        implements AdapterView.OnItemSelectedListener{
 
   DataSource mDataSource;
   CursorAdapter termCourseCursorAdapter;
@@ -50,15 +55,8 @@ public class TermActivity extends AppCompatActivity {
     if(uri != null){
       termId = Integer.parseInt(uri.getLastPathSegment());
       Log.d(TAG, "uri: " + uri.toString());
-      currentTerm = mDataSource.getTermById(Integer.toString(termId));
-      currentTerm.moveToFirst();
-      setTitle(currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE)));
 
-      startDate = findViewById(R.id.startDate);
-      startDate.setText(currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_START)));
-
-      endDate = findViewById(R.id.endDate);
-      endDate.setText(currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_END)));
+      populateTermData();
 
       Log.d(TAG, "termTitle: " + currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE)));
     }
@@ -82,6 +80,18 @@ public class TermActivity extends AppCompatActivity {
 //    }else{
 //      deleteTermBtn.setVisibility(View.GONE);
 //    }
+  }
+
+  private void populateTermData() {
+    currentTerm = mDataSource.getTermById(Integer.toString(termId));
+    currentTerm.moveToFirst();
+    setTitle(currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE)));
+
+    startDate = findViewById(R.id.startDate);
+    startDate.setText(currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_START)));
+
+    endDate = findViewById(R.id.endDate);
+    endDate.setText(currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_END)));
   }
 
   public void populateTermCourseList(){
@@ -121,6 +131,40 @@ public class TermActivity extends AppCompatActivity {
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == TERM_REQUEST_CODE && resultCode == RESULT_OK) {
       populateTermCourseList();
+      populateTermData();
     }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()){
+      case R.id.editTermIcon:
+        Intent intent = new Intent(TermActivity.this, EditTermActivity.class);
+        intent.putExtra("termId", termId);
+        intent.putExtra("termName", currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE)));
+        intent.putExtra("termStart", currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_START)));
+        intent.putExtra("termEnd", currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_END)));
+        startActivityForResult(intent, TERM_REQUEST_CODE);
+        return true;
+    }
+
+    return false;
+  }
+
+  @Override
+  public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+  }
+
+  @Override
+  public void onNothingSelected(AdapterView<?> adapterView) {
+
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.term_detail_menu, menu);
+    return true;
   }
 }

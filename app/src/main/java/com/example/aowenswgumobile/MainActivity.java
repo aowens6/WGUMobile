@@ -103,27 +103,30 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void addTerm(View view) {
+    Intent intent = new Intent(MainActivity.this, EditTermActivity.class);
+    intent.putExtra("termId", 0);
+    startActivityForResult(intent, MAIN_REQUEST_CODE);
 
-    int termCount = mDataSource.getTermsCount();
-
-    LocalDate startDate = LocalDate.of(2019, 1,1);
-    LocalDate endDate = LocalDate.of(2019,7,1);
-
-    if (termCount == 0) {
-      currentTermStartDate = dateFormat.format(startDate);
-      currentTermEndDate = dateFormat.format(endDate);
-    }else{
-      startDate = startDate.plusMonths(termCount * 6).plusDays(1);
-      currentTermStartDate = startDate.format(dateFormat);
-
-      endDate = endDate.plusMonths(termCount * 6);
-      currentTermEndDate = endDate.format(dateFormat);
-    }
-
-    Term term = new Term("Term " + (termCount + 1), currentTermStartDate, currentTermEndDate);
-
-    mDataSource.createTerm(term);
-    populateTermLV();
+//    int termCount = mDataSource.getTermsCount();
+//
+//    LocalDate startDate = LocalDate.of(2019, 1,1);
+//    LocalDate endDate = LocalDate.of(2019,7,1);
+//
+//    if (termCount == 0) {
+//      currentTermStartDate = dateFormat.format(startDate);
+//      currentTermEndDate = dateFormat.format(endDate);
+//    }else{
+//      startDate = startDate.plusMonths(termCount * 6).plusDays(1);
+//      currentTermStartDate = startDate.format(dateFormat);
+//
+//      endDate = endDate.plusMonths(termCount * 6);
+//      currentTermEndDate = endDate.format(dateFormat);
+//    }
+//
+//    Term term = new Term("Term " + (termCount + 1), currentTermStartDate, currentTermEndDate);
+//
+//    mDataSource.createTerm(term);
+//    populateTermLV();
   }
 
   @Override
