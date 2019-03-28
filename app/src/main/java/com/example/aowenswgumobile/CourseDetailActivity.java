@@ -30,10 +30,16 @@ import com.example.aowenswgumobile.database.NotesTable;
 import com.example.aowenswgumobile.database.TermsTable;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 
 import model.Course;
 import model.DatePickerFragment;
+
+import static com.example.aowenswgumobile.MainActivity.dateFormat;
 
 public class CourseDetailActivity extends AppCompatActivity
 implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListener {
@@ -53,7 +59,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   private FloatingActionButton pendingFAB;
   private boolean isStartDatePicker;
   private boolean isNewCourse;
-  private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+
   private static final int COURSE_DETAIL_REQUEST_CODE = 1005;
   private static final String TAG = "CourseDetail";
 
@@ -186,11 +192,14 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   @Override
   public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-    Calendar c = Calendar.getInstance();
-    c.set(Calendar.YEAR, year);
-    c.set(Calendar.MONTH, month);
-    c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-    String currentDateString = dateFormat.format(c.getTime());
+//    Calendar c = Calendar.getInstance();
+//    c.set(Calendar.YEAR, year);
+//    c.set(Calendar.MONTH, month);
+//    c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+//    String currentDateString = dateFormat.format((TemporalAccessor) c.getTime());
+    month++;
+    LocalDate currentDate = LocalDate.of(year, month, dayOfMonth);
+    String currentDateString = currentDate.format(dateFormat);
 
     if(isStartDatePicker){
       mDataSource.updateCourseStart(Integer.toString(courseId), currentDateString);

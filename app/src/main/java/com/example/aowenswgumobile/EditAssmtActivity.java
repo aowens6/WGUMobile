@@ -26,11 +26,15 @@ import com.example.aowenswgumobile.database.CourseTable;
 import com.example.aowenswgumobile.database.DataSource;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import model.Assessment;
 import model.Course;
 import model.DatePickerFragment;
+
+import static com.example.aowenswgumobile.MainActivity.dateFormat;
+
 
 public class EditAssmtActivity extends AppCompatActivity
 implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListener{
@@ -49,7 +53,6 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   private TextView dueDateFld;
   private TextView goalDateFld;
   private Spinner assessmentTypeSpinner;
-  private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
   private static final String TAG = "EditAssmt";
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -249,11 +252,10 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   @Override
   public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-    Calendar c = Calendar.getInstance();
-    c.set(Calendar.YEAR, year);
-    c.set(Calendar.MONTH, month);
-    c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-    String currentDateString = dateFormat.format(c.getTime());
+
+    month++;
+    LocalDate currentDate = LocalDate.of(year, month, dayOfMonth);
+    String currentDateString = currentDate.format(dateFormat);
 
     if(isGoalPicker){
       goalDateFld.setText(currentDateString);

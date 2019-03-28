@@ -21,10 +21,13 @@ import android.widget.Toast;
 import com.example.aowenswgumobile.database.DataSource;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import model.DatePickerFragment;
 import model.Term;
+
+import static com.example.aowenswgumobile.MainActivity.dateFormat;
 
 public class EditTermActivity extends AppCompatActivity
 implements DatePickerDialog.OnDateSetListener{
@@ -35,7 +38,6 @@ implements DatePickerDialog.OnDateSetListener{
   private EditText titleTextFld;
   private TextView startTermDateFld;
   private TextView endTermDateFld;
-  private SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
   private int termId;
   private String termTitle;
   private String termStart;
@@ -110,11 +112,9 @@ implements DatePickerDialog.OnDateSetListener{
 
   @Override
   public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-    Calendar c = Calendar.getInstance();
-    c.set(Calendar.YEAR, year);
-    c.set(Calendar.MONTH, month);
-    c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-    String currentDateString = dateFormat.format(c.getTime());
+    month++;
+    LocalDate currentDate = LocalDate.of(year, month, dayOfMonth);
+    String currentDateString = currentDate.format(dateFormat);
 
     if(isStartDatePicker){
       TextView startCourseDate = findViewById(R.id.startTermFld);

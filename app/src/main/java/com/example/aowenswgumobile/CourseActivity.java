@@ -91,7 +91,7 @@ public class CourseActivity extends AppCompatActivity {
   public void onBackPressed() {
     setResult(RESULT_OK);
     super.onBackPressed();
-//    Intent intent = new Intent(CourseActivity.this, TermActivity.class);
+//    Intent intent = new Intent(CourseActivity.this, TermDetailActivity.class);
 //    Uri uri = Uri.parse(TermsTable.TERM_CONTENT_URI + "/" + termId);
 //    Intent intent = getIntent();
 //    Uri uri = intent.getParcelableExtra(CourseTable.CONTENT_ITEM_TYPE);

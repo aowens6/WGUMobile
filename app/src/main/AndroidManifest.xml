@@ -10,6 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".TermActivity"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.aowenswgumobile.MainActivity" />
+        </activity>
+        <activity
             android:name=".EditAssmtActivity"
             android:parentActivityName=".AssessmentsActivity">
             <meta-data
@@ -47,20 +54,20 @@
         </activity>
         <activity
             android:name=".CourseDetailActivity"
-            android:parentActivityName=".TermActivity">
+            android:parentActivityName=".TermDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.aowenswgumobile.TermActivity" />
+                android:value="com.example.aowenswgumobile.TermDetailActivity" />
         </activity>
         <activity
             android:name=".CourseActivity"
-            android:parentActivityName=".TermActivity">
+            android:parentActivityName=".TermDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.aowenswgumobile.TermActivity" />
+                android:value="com.example.aowenswgumobile.TermDetailActivity" />
         </activity>
         <activity
-            android:name=".TermActivity"
+            android:name=".TermDetailActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
