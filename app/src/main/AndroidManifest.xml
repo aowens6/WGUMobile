@@ -9,7 +9,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditTermActivity"></activity>
+        <activity
+            android:name=".EditAssmtActivity"
+            android:parentActivityName=".AssessmentsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.aowenswgumobile.AssessmentsActivity" />
+        </activity>
+        <activity
+            android:name=".AssessmentsActivity"
+            android:parentActivityName=".CourseDetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.aowenswgumobile.CourseDetailActivity" />
+        </activity>
+        <activity android:name=".EditTermActivity" />
         <activity
             android:name=".EditNoteActivity"
             android:parentActivityName=".NotesActivity">

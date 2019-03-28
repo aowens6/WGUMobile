@@ -313,4 +313,14 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     intent.putExtra("termId", termId);
     startActivityForResult(intent, COURSE_DETAIL_REQUEST_CODE);
   }
+
+  public void viewAssessments(View view) {
+    if(!isNewCourse){
+      Intent intent = new Intent(CourseDetailActivity.this, AssessmentsActivity.class);
+      intent.putExtra("courseId", courseId);
+      startActivityForResult(intent, COURSE_DETAIL_REQUEST_CODE);
+    }else{
+      Toast.makeText(this, "Course is not saved yet", Toast.LENGTH_SHORT).show();
+    }
+  }
 }

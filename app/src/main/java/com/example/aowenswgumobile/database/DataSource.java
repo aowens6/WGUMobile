@@ -6,9 +6,11 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
+import model.Assessment;
 import model.Course;
 import model.Mentor;
 import model.Note;
@@ -220,6 +222,33 @@ public class DataSource {
 
   public void deleteNote(String noteId){
     mDatabase.delete(NotesTable.TABLE_NOTES, NotesTable.NOTE_ID + "=" + noteId,null);
+  }
+
+  public Cursor getAssessmentsByCourseId(String courseId){
+    Cursor c = mDatabase.query(AssessmentTable.TABLE_ASSESSMENTS, AssessmentTable.ALL_ASSMT_COLUMNS,
+            AssessmentTable.ASSESSMENT_COURSE_ID + "=" + courseId,
+            null,null, null, null);
+    return c;
+  }
+
+  public Cursor getAssmtByID(String assessmentId){
+    Cursor c = mDatabase.query(AssessmentTable.TABLE_ASSESSMENTS, AssessmentTable.ALL_ASSMT_COLUMNS,
+            AssessmentTable.ASSESSMENT_ID + "=" + assessmentId,
+            null, null, null, null);
+    return c;
+  }
+
+  public void insertAssessment(Assessment assessment){
+    Log.d("DATASOURCE", "insertAssessment: POPULATE: INSERT");
+    ContentValues values = assessment.toValues();
+    mDatabase.insert(AssessmentTable.TABLE_ASSESSMENTS, null, values);
+  }
+
+  public void updateAssessment(Assessment assessment, String assessmentId){
+    Log.d("DATASOURCE", "insertAssessment: POPULATE: UPDATE");
+    ContentValues values = assessment.toValues();
+    mDatabase.update(AssessmentTable.TABLE_ASSESSMENTS, values,
+            AssessmentTable.ASSESSMENT_ID + "=" + assessmentId,null);
   }
 
   public void open(){

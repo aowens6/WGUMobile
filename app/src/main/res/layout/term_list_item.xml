@@ -32,11 +32,10 @@
         android:id="@+id/startDateListTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="16dp"
         android:text="TextView"
         app:layout_constraintBaseline_toBaselineOf="@+id/textStart"
-        app:layout_constraintStart_toEndOf="@+id/termTitle" />
+        app:layout_constraintStart_toEndOf="@+id/textStart" />
 
     <TextView
         android:id="@+id/textView7"

@@ -24,6 +24,7 @@
         android:layout_height="37dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="148dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView8"
         app:layout_constraintStart_toEndOf="@+id/textView8"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -120,6 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="192dp"
         android:text="Assessments"
+        android:onClick="viewAssessments"
         app:layout_constraintBaseline_toBaselineOf="@+id/notesBtn"
         app:layout_constraintStart_toStartOf="parent" />
 
