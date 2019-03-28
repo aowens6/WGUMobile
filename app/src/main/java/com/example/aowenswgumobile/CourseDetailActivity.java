@@ -5,11 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -105,7 +104,6 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     if(extras != null) {
       courseId = extras.getInt("courseId");
       termId = extras.getInt("termId");
-//      Log.d(TAG, "courseID: " + courseId);
 
       if(courseId == 0){
         isNewCourse = true;
@@ -121,8 +119,6 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
         courseTitle = currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME));
         termTitle = currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE));
-//        termId = currentTerm.getInt(currentTerm.getColumnIndex(TermsTable.TERM_ID));
-        Log.d(TAG, "onCreate: termId: " + termId + "  courseId: " + courseId);
 
         setTitle("Edit " + courseTitle);
 
@@ -231,10 +227,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   }
 
   public boolean isValidData(){
-//    titleFld
-//    startCourseDate
-//    endCourseDate
-//    statusSpinner
+
     if(titleFld.getText().length() == 0){
       final AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
       myAlertDialog.setTitle("Missing course title");

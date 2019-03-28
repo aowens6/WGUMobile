@@ -1,43 +1,26 @@
 package com.example.aowenswgumobile;
 
-import android.app.LoaderManager;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import com.example.aowenswgumobile.database.DBHelper;
 import com.example.aowenswgumobile.database.DataSource;
 import com.example.aowenswgumobile.database.TermsTable;
-
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-
-import model.Term;
 
 public class MainActivity extends AppCompatActivity {
 
   private DataSource mDataSource;
   private CursorAdapter termCursorAdapter;
   private ListView termList;
-  private DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-  private static String currentTermStartDate;
-  private static String currentTermEndDate;
   private static final int MAIN_REQUEST_CODE = 1001;
   private static final String TAG = "MainActivity";
 
@@ -72,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     setTitle("Terms");
 
-
-
   }
 
   public void populateTermLV(){
@@ -106,27 +87,6 @@ public class MainActivity extends AppCompatActivity {
     Intent intent = new Intent(MainActivity.this, EditTermActivity.class);
     intent.putExtra("termId", 0);
     startActivityForResult(intent, MAIN_REQUEST_CODE);
-
-//    int termCount = mDataSource.getTermsCount();
-//
-//    LocalDate startDate = LocalDate.of(2019, 1,1);
-//    LocalDate endDate = LocalDate.of(2019,7,1);
-//
-//    if (termCount == 0) {
-//      currentTermStartDate = dateFormat.format(startDate);
-//      currentTermEndDate = dateFormat.format(endDate);
-//    }else{
-//      startDate = startDate.plusMonths(termCount * 6).plusDays(1);
-//      currentTermStartDate = startDate.format(dateFormat);
-//
-//      endDate = endDate.plusMonths(termCount * 6);
-//      currentTermEndDate = endDate.format(dateFormat);
-//    }
-//
-//    Term term = new Term("Term " + (termCount + 1), currentTermStartDate, currentTermEndDate);
-//
-//    mDataSource.createTerm(term);
-//    populateTermLV();
   }
 
   @Override

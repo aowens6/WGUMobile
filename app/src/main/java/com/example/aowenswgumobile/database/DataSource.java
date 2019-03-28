@@ -251,6 +251,15 @@ public class DataSource {
             AssessmentTable.ASSESSMENT_ID + "=" + assessmentId,null);
   }
 
+  public void deleteAssessment(String assessmentId){
+    mDatabase.delete(AssessmentTable.TABLE_ASSESSMENTS,
+            AssessmentTable.ASSESSMENT_ID + "=" + assessmentId, null);
+  }
+
+  public int getAssessmentCount(){
+    return (int) DatabaseUtils.queryNumEntries(mDatabase, AssessmentTable.TABLE_ASSESSMENTS);
+  }
+
   public void open(){
     mDatabase = mDbHelper.getWritableDatabase();
   }

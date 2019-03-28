@@ -9,6 +9,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +19,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.aowenswgumobile.database.AssessmentTable;
 import com.example.aowenswgumobile.database.CourseTable;
@@ -36,6 +39,8 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   private Bundle extras;
   private int courseId;
   private int assmtId;
+  private String assmtTitle;
+  private String courseTitle;
   private boolean isNewAssmt;
   private boolean isGoalPicker;
   private Cursor currentCourse;
@@ -81,7 +86,8 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     if(!isNewAssmt){
       currentCourse = mDataSource.getCourseById(Integer.toString(courseId));
       currentCourse.moveToFirst();
-      setTitle(currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME)) + " Assessments");
+      courseTitle = currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME));
+      setTitle( courseTitle + " Assessments");
       populateAssmtData();
     }else{
       setTitle("New Assessment");
@@ -93,7 +99,8 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     currentAssmt = mDataSource.getAssmtByID(Integer.toString(assmtId));
     currentAssmt.moveToFirst();
 
-    assmtTitleFld.setText(currentAssmt.getString(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_NAME)));
+    assmtTitle = currentAssmt.getString(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_NAME));
+    assmtTitleFld.setText(assmtTitle);
     dueDateFld.setText(currentAssmt.getString(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_DUE)));
     goalDateFld.setText(currentAssmt.getString(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_GOAL)));
     assessmentTypeSpinner.setSelection(currentAssmt.getInt(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_TYPE)));
@@ -101,9 +108,35 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == android.R.id.home) {
-      onBackPressed();
-      return true;
+    switch (item.getItemId() ){
+      case android.R.id.home:
+        onBackPressed();
+        return true;
+
+      case R.id.deleteAssmtIcon:
+        final AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
+        myAlertDialog.setTitle("Confirm Delete");
+        myAlertDialog.setMessage("Delete " + assmtTitle + " from " + courseTitle + "?");
+        myAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+          public void onClick(DialogInterface arg0, int arg1) {
+            mDataSource.deleteAssessment(Integer.toString(assmtId));
+            Toast.makeText(EditAssmtActivity.this,
+                    assmtTitle + " deleted", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            finish();
+          }
+        });
+
+        myAlertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+          public void onClick(DialogInterface arg0, int arg1) {
+            return;
+          }
+        });
+
+        myAlertDialog.show();
+        return true;
     }
     return false;
   }
@@ -227,5 +260,14 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     }else{
       dueDateFld.setText(currentDateString);
     }
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    if (!isNewAssmt){
+      MenuInflater inflater = getMenuInflater();
+      inflater.inflate(R.menu.edit_assessment_menu, menu);
+    }
+    return true;
   }
 }

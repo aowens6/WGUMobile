@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import com.example.aowenswgumobile.database.AssessmentTable;
 import com.example.aowenswgumobile.database.CourseTable;
@@ -73,10 +74,15 @@ public class AssessmentsActivity extends AppCompatActivity {
   }
 
   public void addAssessment(View view) {
-    Intent intent = new Intent(AssessmentsActivity.this, EditAssmtActivity.class);
-    intent.putExtra("courseId", courseId);
-    intent.putExtra("assmtId", 0);
-    startActivityForResult(intent, ASSMT_REQUEST_CODE);
+    int assessmentCount = mDataSource.getAssessmentCount();
+    if(assessmentCount < 5){
+      Intent intent = new Intent(AssessmentsActivity.this, EditAssmtActivity.class);
+      intent.putExtra("courseId", courseId);
+      intent.putExtra("assmtId", 0);
+      startActivityForResult(intent, ASSMT_REQUEST_CODE);
+    } else{
+      Toast.makeText(this, "Limit 5 assessments per course", Toast.LENGTH_SHORT).show();
+    }
   }
 
   @Override
@@ -97,7 +103,6 @@ public class AssessmentsActivity extends AppCompatActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == ASSMT_REQUEST_CODE && resultCode == RESULT_OK) {
-      Log.d(TAG, "onActivityResult: CALLING POPULATE");
       populateAssessmentLV();
     }
   }
