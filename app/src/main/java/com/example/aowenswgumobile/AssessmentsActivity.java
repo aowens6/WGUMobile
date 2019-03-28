@@ -19,6 +19,8 @@ import com.example.aowenswgumobile.database.CourseTable;
 import com.example.aowenswgumobile.database.DataSource;
 import com.example.aowenswgumobile.database.TermsTable;
 
+import model.AssessmentCursorAdapter;
+
 public class AssessmentsActivity extends AppCompatActivity {
 
   private DataSource mDataSource;
@@ -63,11 +65,8 @@ public class AssessmentsActivity extends AppCompatActivity {
   public void populateAssessmentLV(){
     mDataSource.open();
     Cursor cursor = mDataSource.getAssessmentsByCourseId(Integer.toString(courseId));
-    String[] from = {AssessmentTable.ASSESSMENT_NAME, AssessmentTable.ASSESSMENT_DUE};
-    int[] to = {R.id.assmtNameTxt, R.id.assmtDueTxt};
 
-    CursorAdapter assmtCursorAdapter = new SimpleCursorAdapter(this,
-            R.layout.assessment_list_item, cursor, from, to, 0);
+    CursorAdapter assmtCursorAdapter = new AssessmentCursorAdapter(this, cursor, 0);
 
     assmtLV.setAdapter(assmtCursorAdapter);
     Log.d(TAG, "populateAssessmentLV: POPULATE CALLED");
