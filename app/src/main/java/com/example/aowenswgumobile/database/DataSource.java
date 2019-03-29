@@ -76,6 +76,17 @@ public class DataSource {
     return c;
   }
 
+  public int getCompletedCourses(){
+    Cursor c = mDatabase.query(CourseTable.TABLE_COURSES, CourseTable.ALL_COURSE_COLUMNS,
+            CourseTable.COURSE_STATUS_CODE + "= 2", null,null,null,null);
+
+    return c.getCount();
+  }
+
+  public int getCourseCount(){
+    return (int) DatabaseUtils.queryNumEntries(mDatabase, CourseTable.TABLE_COURSES);
+  }
+
   public void insertCourse(Course course){
     ContentValues values = course.toValues();
     mDatabase.insert(CourseTable.TABLE_COURSES, null, values);

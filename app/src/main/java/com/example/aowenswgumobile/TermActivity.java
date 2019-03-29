@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
@@ -77,5 +78,20 @@ public class TermActivity extends AppCompatActivity {
     if (requestCode == TERM_REQUEST_CODE && resultCode == RESULT_OK) {
       populateTermLV();
     }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      onBackPressed();
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public void onBackPressed() {
+    setResult(RESULT_OK);
+    super.onBackPressed();
   }
 }

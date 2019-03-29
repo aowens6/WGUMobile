@@ -86,7 +86,6 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     statusSpinner.setAdapter(spinnerAdapter);
     statusSpinner.setOnItemSelectedListener(this);
 
-
     Button startCourseDateBtn = findViewById(R.id.startCourseDateBtn);
     startCourseDateBtn.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -182,6 +181,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   @Override
   public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+    Log.d(TAG, "progress: " + position);
     mDataSource.updateCourseStatus(Integer.toString(courseId), position);
   }
 
