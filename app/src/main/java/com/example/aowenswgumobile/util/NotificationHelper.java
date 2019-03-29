@@ -5,7 +5,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.support.v4.app.NotificationCompat;
 
 import com.example.aowenswgumobile.R;
 
@@ -38,6 +37,6 @@ public class NotificationHelper extends ContextWrapper {
     return new Notification.Builder(getApplicationContext(),channelID)
             .setContentTitle(titleText)
             .setContentText(contentText)
-            .setSmallIcon(R.drawable.ic_o_icon);
+            .setSmallIcon(R.drawable.ic_notify_logo);
   }
 }

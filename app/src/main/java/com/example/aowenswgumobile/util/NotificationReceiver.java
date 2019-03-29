@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import static com.example.aowenswgumobile.MainActivity.notificationCount;
+
 public class NotificationReceiver extends BroadcastReceiver {
 
   private Bundle extras;
@@ -17,6 +19,6 @@ public class NotificationReceiver extends BroadcastReceiver {
             notificationHelper.getChannelNotification(
                     extras.getString("title"),
                     extras.getString("content"));
-    notificationHelper.getManager().notify(1, nb.build());
+    notificationHelper.getManager().notify(notificationCount, nb.build());
   }
 }

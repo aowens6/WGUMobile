@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
   private TextView progressLbl;
   private static final String TAG = "MainActivity";
   private static final int MAIN_REQUEST_CODE = 1000;
+  public static int notificationCount;
   public static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
   @Override
@@ -46,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     Intent intent=new Intent(MainActivity.this, NotificationReceiver.class);
-    intent.putExtra("title","New Title");
+    intent.putExtra("title","New Title " + notificationCount);
     intent.putExtra("content", "New Content");
-    PendingIntent p1= PendingIntent.getBroadcast(getApplicationContext(),0, intent,0);
+    PendingIntent p1= PendingIntent.getBroadcast(getApplicationContext(),notificationCount++, intent,0);
     AlarmManager a= (AlarmManager) getSystemService(ALARM_SERVICE);
     a.set(AlarmManager.RTC,System.currentTimeMillis() + 5000,p1);
 
