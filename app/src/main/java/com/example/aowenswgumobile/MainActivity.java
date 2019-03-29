@@ -1,5 +1,7 @@
 package com.example.aowenswgumobile;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.aowenswgumobile.database.DataSource;
+import com.example.aowenswgumobile.util.NotificationReceiver;
 
 import java.time.format.DateTimeFormatter;
 
@@ -41,6 +44,14 @@ public class MainActivity extends AppCompatActivity {
       editor.putBoolean("firstTime", true);
       editor.commit();
     }
+
+    Intent intent=new Intent(MainActivity.this, NotificationReceiver.class);
+    intent.putExtra("title","New Title");
+    intent.putExtra("content", "New Content");
+    PendingIntent p1= PendingIntent.getBroadcast(getApplicationContext(),0, intent,0);
+    AlarmManager a= (AlarmManager) getSystemService(ALARM_SERVICE);
+    a.set(AlarmManager.RTC,System.currentTimeMillis() + 5000,p1);
+
 
     programProgress = findViewById(R.id.programProgress);
     progressLbl = findViewById(R.id.progressLbl);
