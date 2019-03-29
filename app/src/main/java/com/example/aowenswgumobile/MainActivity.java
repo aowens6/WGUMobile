@@ -33,11 +33,6 @@ public class MainActivity extends AppCompatActivity {
     mDataSource = new DataSource(this);
     mDataSource.open();
 
-    programProgress = findViewById(R.id.programProgress);
-    progressLbl = findViewById(R.id.progressLbl);
-
-    calculateProgress();
-
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     if(!prefs.getBoolean("firstTime", false)) {
       mDataSource.initializeCourses();
@@ -46,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
       editor.putBoolean("firstTime", true);
       editor.commit();
     }
+
+    programProgress = findViewById(R.id.programProgress);
+    progressLbl = findViewById(R.id.progressLbl);
+
+    calculateProgress();
+
 
     setTitle("WGU Home");
   }
