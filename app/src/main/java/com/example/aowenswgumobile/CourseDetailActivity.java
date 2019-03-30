@@ -1,6 +1,10 @@
 package com.example.aowenswgumobile;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,36 +22,48 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.aowenswgumobile.database.AlertTable;
 import com.example.aowenswgumobile.database.CourseTable;
 import com.example.aowenswgumobile.database.DataSource;
 import com.example.aowenswgumobile.database.MentorTable;
 import com.example.aowenswgumobile.database.NotesTable;
 import com.example.aowenswgumobile.database.TermsTable;
+import com.example.aowenswgumobile.util.NotificationReceiver;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Calendar;
 
+import model.Alert;
 import model.Course;
 import model.DatePickerFragment;
+import model.TimePickerFragment;
 
 import static com.example.aowenswgumobile.MainActivity.dateFormat;
 
 public class CourseDetailActivity extends AppCompatActivity
-implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListener {
+implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
   private DataSource mDataSource;
   private Bundle extras;
   private int courseId;
   private int termId;
+  private int startCbxSelection;
+  private int endCbxSelection;
   private String courseTitle;
   private String termTitle;
   private Cursor currentCourse;
@@ -55,10 +71,18 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   private TextView titleFld;
   private TextView startCourseDate;
   private TextView endCourseDate;
+  private CheckBox startCourseAlertCbx;
+  private CheckBox endCourseAlertCbx;
   private Spinner statusSpinner;
   private FloatingActionButton pendingFAB;
   private boolean isStartDatePicker;
+  private boolean isEndDatePicker;
+  private boolean isStartCbx;
   private boolean isNewCourse;
+  private LocalDate chosenDate;
+  private String chosenDateString;
+  private LocalTime chosenTime;
+  private String chosenTimeString;
 
   private static final int COURSE_DETAIL_REQUEST_CODE = 1005;
   private static final String TAG = "CourseDetail";
@@ -77,7 +101,10 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     titleFld = findViewById(R.id.titleFld);
     startCourseDate = findViewById(R.id.startCourseDate);
     endCourseDate = findViewById(R.id.endCourseDate);
+    startCourseAlertCbx = findViewById(R.id.startCourseAlertCbx);
+    endCourseAlertCbx = findViewById(R.id.endCourseAlertCbx);
     statusSpinner = findViewById(R.id.statusSpinner);
+
     pendingFAB = findViewById(R.id.pendingFAB);
 
     ArrayAdapter<CharSequence> spinnerAdapter =
@@ -100,7 +127,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     endCourseDateBtn.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        isStartDatePicker = false;
+        isEndDatePicker = true;
         DialogFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "date picker");
       }
@@ -125,12 +152,28 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
         courseTitle = currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME));
         termTitle = currentTerm.getString(currentTerm.getColumnIndex(TermsTable.TERM_TITLE));
 
+        startCbxSelection = currentCourse.getInt(currentCourse.getColumnIndex(CourseTable.COURSE_START_ALERT));
+        endCbxSelection = currentCourse.getInt(currentCourse.getColumnIndex(CourseTable.COURSE_END_ALERT));
+
+        if(startCbxSelection == 1){
+          startCourseAlertCbx.setChecked(true);
+        }else if(startCbxSelection == 0 ){
+          startCourseAlertCbx.setChecked(false);
+        }
+
+        if (endCbxSelection == 1) {
+          endCourseAlertCbx.setChecked(true);
+        } else if (endCbxSelection == 0) {
+          endCourseAlertCbx.setChecked(false);
+        }
+
         setTitle("Edit " + courseTitle);
 
         titleFld.setText(courseTitle);
         startCourseDate.setText(currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_START)));
         endCourseDate.setText(currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_END)));
         statusSpinner.setSelection(currentCourse.getInt(currentCourse.getColumnIndex(CourseTable.COURSE_STATUS_CODE)));
+
         pendingFAB.hide();
       }
     }
@@ -198,17 +241,26 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 //    c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 //    String currentDateString = dateFormat.format((TemporalAccessor) c.getTime());
     month++;
-    LocalDate currentDate = LocalDate.of(year, month, dayOfMonth);
-    String currentDateString = currentDate.format(dateFormat);
 
+    chosenDate = LocalDate.of(year, month, dayOfMonth);
+    chosenDateString = chosenDate.format(dateFormat);
+
+    if(isStartCbx){
+      DialogFragment timePickerDialog = new TimePickerFragment();
+      timePickerDialog.show(getSupportFragmentManager(), "timePicker");
+      isStartCbx = false;
+    }
+
+    populateDate();
+  }
+
+  private void populateDate() {
     if(isStartDatePicker){
-      mDataSource.updateCourseStart(Integer.toString(courseId), currentDateString);
-      TextView startCourseDate = findViewById(R.id.startCourseDate);
-      startCourseDate.setText(currentDateString);
-    }else{
-      mDataSource.updateCourseEnd(Integer.toString(courseId), currentDateString);
-      TextView endCourseDate = findViewById(R.id.endCourseDate);
-      endCourseDate.setText(currentDateString);
+      startCourseDate.setText(chosenDateString);
+      isStartDatePicker = false;
+    }else if(isEndDatePicker){
+      endCourseDate.setText(chosenDateString);
+      isEndDatePicker = false;
     }
   }
 
@@ -291,15 +343,39 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   public void saveCourse(View view) {
 
+    String courseTitle = titleFld.getText().toString();
+    String startDate = startCourseDate.getText().toString();
+    String endDate = endCourseDate.getText().toString();
+
+    if(startCourseAlertCbx.isChecked()){
+      startCbxSelection = 1;
+    }else{
+      startCbxSelection = 0;
+    }
+
+    if(endCourseAlertCbx.isChecked()){
+      endCbxSelection = 1;
+    }else{
+      endCbxSelection = 0;
+    }
+
     if(isValidData()){
-      Course course = new Course(titleFld.getText().toString(),
-              startCourseDate.getText().toString(),
-              endCourseDate.getText().toString(),
+
+      Course course = new Course(courseTitle,startDate,endDate,
               statusSpinner.getSelectedItemPosition(),
-              termId, 3);
+              termId, 3, startCbxSelection, endCbxSelection);
 
       if(isNewCourse){
+
         mDataSource.insertCourse(course);
+        int newCourseId = mDataSource.getMaxCourseId();
+
+        if(startCourseAlertCbx.isChecked()){
+          createNewAlert(newCourseId,courseTitle + " starting soon!",
+                  courseTitle + " starting on " + startDate, AlertTable.ALERT_COURSE_START,
+                  LocalDateTime.of(chosenDate, chosenTime));
+        }
+
       }else{
         mDataSource.updateCourse(course, Integer.toString(courseId));
       }
@@ -308,6 +384,25 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
       finish();
     }
 
+  }
+
+  public void createNewAlert(int courseId, String title, String content, String alertType, LocalDateTime chosenDateTime){
+
+    //creating alert record and then retrieving its ID
+    Alert alert = new Alert(courseId, alertType);
+    mDataSource.insertAlert(alert);
+    int alertId = mDataSource.getMaxAlertId();
+
+    ZonedDateTime zonedDateTime = chosenDateTime.atZone(ZoneId.systemDefault());
+    long millis = zonedDateTime.toInstant().toEpochMilli();
+    Log.d(TAG, "millis: " + millis);
+
+    Intent intent = new Intent(CourseDetailActivity.this, NotificationReceiver.class);
+    intent.putExtra("title",title);
+    intent.putExtra("content", content);
+    PendingIntent p1= PendingIntent.getBroadcast(getApplicationContext(), alertId, intent,0);
+    AlarmManager a= (AlarmManager) getSystemService(ALARM_SERVICE);
+    a.set(AlarmManager.RTC,millis,p1);
   }
 
   public void addPendingCourse(View view) {
@@ -324,5 +419,20 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     }else{
       Toast.makeText(this, "Course is not saved yet", Toast.LENGTH_SHORT).show();
     }
+  }
+
+  public void chooseDate(View view) {
+    if(startCourseAlertCbx.isChecked()){
+      isStartCbx = true;
+      DialogFragment datePicker = new DatePickerFragment();
+      datePicker.show(getSupportFragmentManager(), "date picker");
+    }
+  }
+
+  @Override
+  public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+    chosenTime = LocalTime.of(hour,minute);
+
+    Log.d(TAG, "onTimeSet: chosenDate: " + chosenDateString + "  chosenTime: " + chosenTime);
   }
 }

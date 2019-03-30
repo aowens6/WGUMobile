@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import model.Alert;
 import model.Assessment;
 import model.Course;
 import model.Mentor;
@@ -133,19 +134,31 @@ public class DataSource {
     return c;
   }
 
+  public int getMaxCourseId(){
+
+    String[] columns = {"MAX(_id)"};
+
+    Cursor c = mDatabase.query(CourseTable.TABLE_COURSES, columns,
+            null,
+            null, null, null, null);
+    c.moveToFirst();
+    int maxId = c.getInt(0);
+    return maxId;
+  }
+
   public void initializeCourses(){
 
-    Course course1 = new Course("Organization", "", "", 1, 0, 1);
-    Course course2 = new Course("SQL", "", "", 1, 0,1);
-    Course course3 = new Course("UX/UI", "", "", 2, 0,2);
-    Course course4 = new Course("Software Engineering", "", "", 2, 0,3);
-    Course course5 = new Course("Business", "", "", 3, 0,3);
-    Course course6 = new Course("IT Applications", "", "", 3, 1,4);
-    Course course7 = new Course("Software 1", "", "", 4, 1,4);
-    Course course8 = new Course("Software 2", "", "", 4, 1,5);
-    Course course9 = new Course("Mobile Apps", "", "", 2, 1,5);
-    Course course10 = new Course("Capstone", "", "", 3, 2,5);
-    Course course11 = new Course("IT Fundamentals", "", "", 1, 3,5);
+    Course course1 = new Course("Organization", "", "", 1, 0, 1, 0, 0);
+    Course course2 = new Course("SQL", "", "", 1, 0,1,0,0);
+    Course course3 = new Course("UX/UI", "", "", 2, 0,2,0,0);
+    Course course4 = new Course("Software Engineering", "", "", 2, 0,3,0,0);
+    Course course5 = new Course("Business", "", "", 3, 0,3,0,0);
+    Course course6 = new Course("IT Applications", "", "", 3, 1,4,0,0);
+    Course course7 = new Course("Software 1", "", "", 4, 1,4,0,0);
+    Course course8 = new Course("Software 2", "", "", 4, 1,5,0,0);
+    Course course9 = new Course("Mobile Apps", "", "", 2, 1,5,0,0);
+    Course course10 = new Course("Capstone", "", "", 3, 2,5,0,0);
+    Course course11 = new Course("IT Fundamentals", "", "", 1, 3,5,0,0);
 
     courses.add(course1);
     courses.add(course2);
@@ -250,7 +263,6 @@ public class DataSource {
   }
 
   public void insertAssessment(Assessment assessment){
-    Log.d("DATASOURCE", "insertAssessment: POPULATE: INSERT");
     ContentValues values = assessment.toValues();
     mDatabase.insert(AssessmentTable.TABLE_ASSESSMENTS, null, values);
   }
@@ -269,6 +281,23 @@ public class DataSource {
 
   public int getAssessmentCount(){
     return (int) DatabaseUtils.queryNumEntries(mDatabase, AssessmentTable.TABLE_ASSESSMENTS);
+  }
+
+  public void insertAlert(Alert alert){
+    ContentValues values = alert.toValues();
+    mDatabase.insert(AlertTable.TABLE_ALERTS,null, values);
+  }
+
+  public int getMaxAlertId(){
+
+    String[] columns = {"MAX(_id)"};
+
+    Cursor c = mDatabase.query(AlertTable.TABLE_ALERTS, columns,
+            null,
+            null, null, null, null);
+    c.moveToFirst();
+    int maxId = c.getInt(0);
+    return maxId;
   }
 
   public void open(){

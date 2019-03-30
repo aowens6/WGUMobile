@@ -16,9 +16,13 @@ public class CourseTable {
   public static final String COURSE_STATUS_CODE = "status";
   public static final String COURSE_TERM_ID = "termId";
   public static final String COURSE_MENTOR_CODE = "mentorCode";
+  public static final String COURSE_START_ALERT = "startAlert";
+  public static final String COURSE_END_ALERT = "endAlert";
 
   public static final String[] ALL_COURSE_COLUMNS =
-          {COURSE_ID, COURSE_NAME, COURSE_START, COURSE_END,COURSE_STATUS_CODE,COURSE_TERM_ID, COURSE_MENTOR_CODE};
+          {COURSE_ID, COURSE_NAME, COURSE_START,
+                  COURSE_END,COURSE_STATUS_CODE,COURSE_TERM_ID,
+                  COURSE_MENTOR_CODE, COURSE_START_ALERT, COURSE_END_ALERT};
 
   public static final String CONTENT_ITEM_TYPE = "Course";
 
@@ -30,7 +34,9 @@ public class CourseTable {
             COURSE_START + " TEXT," +
             COURSE_END + " TEXT," +
             COURSE_TERM_ID + " INTEGER," +
-            COURSE_MENTOR_CODE + " INTEGER" +
+            COURSE_MENTOR_CODE + " INTEGER," +
+            COURSE_START_ALERT + " INTEGER," +
+            COURSE_END_ALERT + " INTEGER" +
             ")";
 
 }

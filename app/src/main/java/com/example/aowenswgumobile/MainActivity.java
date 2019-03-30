@@ -46,13 +46,6 @@ public class MainActivity extends AppCompatActivity {
       editor.commit();
     }
 
-    Intent intent=new Intent(MainActivity.this, NotificationReceiver.class);
-    intent.putExtra("title","New Title " + notificationCount);
-    intent.putExtra("content", "New Content");
-    PendingIntent p1= PendingIntent.getBroadcast(getApplicationContext(),notificationCount++, intent,0);
-    AlarmManager a= (AlarmManager) getSystemService(ALARM_SERVICE);
-    a.set(AlarmManager.RTC,System.currentTimeMillis() + 5000,p1);
-
 
     programProgress = findViewById(R.id.programProgress);
     progressLbl = findViewById(R.id.progressLbl);
