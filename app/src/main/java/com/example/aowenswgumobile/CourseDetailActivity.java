@@ -405,20 +405,35 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
                   courseTitle + " starting on " + startDate, AlertTable.ALERT_COURSE_START,
                   LocalDateTime.of(chosenStartDate, chosenStartTime));
         }else{
-          Cursor alertCursor = mDataSource.getAlertByCourseAndType(Integer.toString(courseId), AlertTable.ALERT_COURSE_START);
-          while(alertCursor.moveToNext()){
-            int alertId = alertCursor.getInt(alertCursor.getColumnIndex(AlertTable.ALERT_ID));
-            cancelAlert(alertId);
-          }
+          cancelAlert(AlertTable.ALERT_COURSE_START);
         }
 
-        
+        if(endCourseAlertCbx.isChecked()){
+          createNewAlert(courseId,courseTitle + " ending soon!",
+                  courseTitle + " ending on " + endDate, AlertTable.ALERT_COURSE_END,
+                  LocalDateTime.of(chosenEndDate, chosenEndTime));
+        }else{
+          cancelAlert(AlertTable.ALERT_COURSE_END);
+        }
       }
 
       setResult(RESULT_OK);
       finish();
     }
 
+  }
+
+  private void cancelAlert(String alertType) {
+    Cursor alertCursor = mDataSource.getAlertByCourseAndType(Integer.toString(courseId), alertType);
+    while(alertCursor.moveToNext()){
+      int alertId = alertCursor.getInt(alertCursor.getColumnIndex(AlertTable.ALERT_ID));
+      AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+      Intent myIntent = new Intent(getApplicationContext(), NotificationReceiver.class);
+      PendingIntent pendingIntent = PendingIntent.getBroadcast(
+              getApplicationContext(), alertId, myIntent, 0);
+
+      alarmManager.cancel(pendingIntent);
+    }
   }
 
   public void createNewAlert(int courseId, String title, String content, String alertType, LocalDateTime chosenDateTime){
@@ -441,14 +456,6 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     a.set(AlarmManager.RTC,millis,p1);
   }
 
-  private void cancelAlert(int alertId) {
-    AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-    Intent myIntent = new Intent(getApplicationContext(), NotificationReceiver.class);
-    PendingIntent pendingIntent = PendingIntent.getBroadcast(
-            getApplicationContext(), alertId, myIntent, 0);
-
-    alarmManager.cancel(pendingIntent);
-  }
 
   public void addPendingCourse(View view) {
     Intent intent = new Intent(CourseDetailActivity.this, CourseActivity.class);
