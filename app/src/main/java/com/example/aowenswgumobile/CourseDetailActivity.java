@@ -84,6 +84,10 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   private String chosenDateString;
   private LocalTime chosenTime;
   private String chosenTimeString;
+  private LocalDate chosenStartDate;
+  private LocalDate chosenEndDate;
+  private LocalTime chosenStartTime;
+  private LocalTime chosenEndTime;
 
   private static final int COURSE_DETAIL_REQUEST_CODE = 1005;
   private static final String TAG = "CourseDetail";
@@ -247,9 +251,15 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     chosenDateString = chosenDate.format(dateFormat);
 
     if(isStartCbx){
+      chosenStartDate = LocalDate.of(year, month, dayOfMonth);
       DialogFragment timePickerDialog = new TimePickerFragment();
       timePickerDialog.show(getSupportFragmentManager(), "timePicker");
-      isStartCbx = false;
+    }
+
+    if(isEndCbx){
+      chosenEndDate = LocalDate.of(year, month, dayOfMonth);
+      DialogFragment timePickerDialog = new TimePickerFragment();
+      timePickerDialog.show(getSupportFragmentManager(), "timePicker");
     }
 
     populateDate();
@@ -375,7 +385,15 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
         if(startCourseAlertCbx.isChecked()){
           createNewAlert(newCourseId,courseTitle + " starting soon!",
                   courseTitle + " starting on " + startDate, AlertTable.ALERT_COURSE_START,
-                  LocalDateTime.of(chosenDate, chosenTime));
+                  LocalDateTime.of(chosenStartDate, chosenStartTime));
+          Log.d(TAG, "START: chosenDate: " + chosenStartDate + " chosenTime: " + chosenStartTime);
+        }
+
+        if(endCourseAlertCbx.isChecked()){
+          createNewAlert(newCourseId,courseTitle + " ending soon!",
+                  courseTitle + " ending on " + endDate, AlertTable.ALERT_COURSE_END,
+                  LocalDateTime.of(chosenEndDate, chosenEndTime));
+          Log.d(TAG, "END: chosenDate: " + chosenEndDate + " chosenTime: " + chosenEndTime);
         }
 
       }else{
@@ -385,7 +403,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
         if(startCourseAlertCbx.isChecked()){
           createNewAlert(courseId,courseTitle + " starting soon!",
                   courseTitle + " starting on " + startDate, AlertTable.ALERT_COURSE_START,
-                  LocalDateTime.of(chosenDate, chosenTime));
+                  LocalDateTime.of(chosenStartDate, chosenStartTime));
         }else{
           Cursor alertCursor = mDataSource.getAlertByCourseAndType(Integer.toString(courseId), AlertTable.ALERT_COURSE_START);
           while(alertCursor.moveToNext()){
@@ -393,6 +411,8 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
             cancelAlert(alertId);
           }
         }
+
+        
       }
 
       setResult(RESULT_OK);
@@ -407,6 +427,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     Alert alert = new Alert(courseId, alertType);
     mDataSource.insertAlert(alert);
     int alertId = mDataSource.getMaxAlertId();
+    Log.d(TAG, "newAlertId: " + alertId + " localDateTime: " + chosenDateTime);
 
     ZonedDateTime zonedDateTime = chosenDateTime.atZone(ZoneId.systemDefault());
     long millis = zonedDateTime.toInstant().toEpochMilli();
@@ -464,7 +485,14 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   @Override
   public void onTimeSet(TimePicker timePicker, int hour, int minute) {
     chosenTime = LocalTime.of(hour,minute);
+    if(isStartCbx){
+      chosenStartTime = LocalTime.of(hour, minute);
+      isStartCbx = false;
+    }
 
-    Log.d(TAG, "onTimeSet: chosenDate: " + chosenDateString + "  chosenTime: " + chosenTime);
+    if(isEndCbx){
+      chosenEndTime = LocalTime.of(hour, minute);
+      isEndCbx = false;
+    }
   }
 }
