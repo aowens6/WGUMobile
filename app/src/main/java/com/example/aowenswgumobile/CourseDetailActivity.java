@@ -78,6 +78,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   private boolean isStartDatePicker;
   private boolean isEndDatePicker;
   private boolean isStartCbx;
+  private boolean isEndCbx;
   private boolean isNewCourse;
   private LocalDate chosenDate;
   private String chosenDateString;
@@ -368,6 +369,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
       if(isNewCourse){
 
         mDataSource.insertCourse(course);
+
         int newCourseId = mDataSource.getMaxCourseId();
 
         if(startCourseAlertCbx.isChecked()){
@@ -377,7 +379,20 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
         }
 
       }else{
+
         mDataSource.updateCourse(course, Integer.toString(courseId));
+
+        if(startCourseAlertCbx.isChecked()){
+          createNewAlert(courseId,courseTitle + " starting soon!",
+                  courseTitle + " starting on " + startDate, AlertTable.ALERT_COURSE_START,
+                  LocalDateTime.of(chosenDate, chosenTime));
+        }else{
+          Cursor alertCursor = mDataSource.getAlertByCourseAndType(Integer.toString(courseId), AlertTable.ALERT_COURSE_START);
+          while(alertCursor.moveToNext()){
+            int alertId = alertCursor.getInt(alertCursor.getColumnIndex(AlertTable.ALERT_ID));
+            cancelAlert(alertId);
+          }
+        }
       }
 
       setResult(RESULT_OK);
@@ -405,6 +420,15 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     a.set(AlarmManager.RTC,millis,p1);
   }
 
+  private void cancelAlert(int alertId) {
+    AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+    Intent myIntent = new Intent(getApplicationContext(), NotificationReceiver.class);
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(
+            getApplicationContext(), alertId, myIntent, 0);
+
+    alarmManager.cancel(pendingIntent);
+  }
+
   public void addPendingCourse(View view) {
     Intent intent = new Intent(CourseDetailActivity.this, CourseActivity.class);
     intent.putExtra("termId", termId);
@@ -421,9 +445,17 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     }
   }
 
-  public void chooseDate(View view) {
+  public void chooseAlertStart(View view) {
     if(startCourseAlertCbx.isChecked()){
       isStartCbx = true;
+      DialogFragment datePicker = new DatePickerFragment();
+      datePicker.show(getSupportFragmentManager(), "date picker");
+    }
+  }
+
+  public void chooseAlertEnd(View view) {
+    if(endCourseAlertCbx.isChecked()){
+      isEndCbx = true;
       DialogFragment datePicker = new DatePickerFragment();
       datePicker.show(getSupportFragmentManager(), "date picker");
     }

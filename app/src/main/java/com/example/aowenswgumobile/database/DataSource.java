@@ -300,6 +300,17 @@ public class DataSource {
     return maxId;
   }
 
+  public Cursor getAlertByCourseAndType(String courseId, String type){
+
+    String[] args = {courseId, type};
+
+    Cursor c = mDatabase.query(AlertTable.TABLE_ALERTS, AlertTable.ALL_ALERT_COLUMNS,
+            AlertTable.ALERT_COURSE_ID + "=? and " + AlertTable.ALERT_TYPECODE + "=?",
+            args, null,null,null);
+    return c;
+
+  }
+
   public void open(){
     mDatabase = mDbHelper.getWritableDatabase();
   }
