@@ -283,6 +283,17 @@ public class DataSource {
     return (int) DatabaseUtils.queryNumEntries(mDatabase, AssessmentTable.TABLE_ASSESSMENTS);
   }
 
+  public int getMaxAssessmentId(){
+    String[] columns = {"MAX(_id)"};
+
+    Cursor c = mDatabase.query(AssessmentTable.TABLE_ASSESSMENTS, columns,
+            null,
+            null, null, null, null);
+    c.moveToFirst();
+    int maxId = c.getInt(0);
+    return maxId;
+  }
+
   public void insertAlert(Alert alert){
     ContentValues values = alert.toValues();
     mDatabase.insert(AlertTable.TABLE_ALERTS,null, values);
@@ -306,6 +317,19 @@ public class DataSource {
 
     Cursor c = mDatabase.query(AlertTable.TABLE_ALERTS, AlertTable.ALL_ALERT_COLUMNS,
             AlertTable.ALERT_COURSE_ID + "=? and " + AlertTable.ALERT_TYPECODE + "=?",
+            args, null,null,null);
+    return c;
+
+  }
+
+  public Cursor getAlertByCourseAssmtAndType(String courseId, String assessmentId, String type){
+
+    String[] args = {courseId, assessmentId, type};
+
+    Cursor c = mDatabase.query(AlertTable.TABLE_ALERTS, AlertTable.ALL_ALERT_COLUMNS,
+            AlertTable.ALERT_COURSE_ID + "=? and " +
+                    AlertTable.ALERT_ASSMT_ID + "=? and " +
+                    AlertTable.ALERT_TYPECODE + "=?",
             args, null,null,null);
     return c;
 

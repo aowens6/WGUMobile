@@ -1,6 +1,9 @@
 package com.example.aowenswgumobile;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,29 +18,38 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.aowenswgumobile.database.AlertTable;
 import com.example.aowenswgumobile.database.AssessmentTable;
 import com.example.aowenswgumobile.database.CourseTable;
 import com.example.aowenswgumobile.database.DataSource;
+import com.example.aowenswgumobile.util.NotificationReceiver;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
+import model.Alert;
 import model.Assessment;
-import model.Course;
 import model.DatePickerFragment;
+import model.TimePickerFragment;
 
 import static com.example.aowenswgumobile.MainActivity.dateFormat;
 
 
 public class EditAssmtActivity extends AppCompatActivity
-implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListener{
+implements AdapterView.OnItemSelectedListener,
+        DatePickerDialog.OnDateSetListener,
+        TimePickerDialog.OnTimeSetListener {
 
   private DataSource mDataSource;
   private Bundle extras;
@@ -51,8 +63,18 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   private Cursor currentAssmt;
   private EditText assmtTitleFld;
   private TextView dueDateFld;
-  private TextView goalDateFld;
+  private TextView startAssmtDateFld;
   private Spinner assessmentTypeSpinner;
+  private CheckBox startAssmtAlertCbx;
+  private CheckBox dueAssmtAlertCbx;
+  private int startCbxSelection;
+  private int dueCbxSelection;
+  private boolean isStartCbx;
+  private boolean isDueCbx;
+  private LocalDate chosenStartAlertDate;
+  private LocalDate chosenDueAlertDate;
+  private LocalTime chosenStartAlertTime;
+  private LocalTime chosenDueAlertTime;
   private static final String TAG = "EditAssmt";
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +88,11 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     extras = intent.getExtras();
 
     assmtTitleFld = findViewById(R.id.assmtTitleFld);
+    startAssmtDateFld = findViewById(R.id.startAssmtDateFld);
     dueDateFld = findViewById(R.id.dueDateFld);
-    goalDateFld = findViewById(R.id.goalDateFld);
     assessmentTypeSpinner = findViewById(R.id.assmtTypeSpinner);
+    startAssmtAlertCbx = findViewById(R.id.startAssmtAlertCbx);
+    dueAssmtAlertCbx = findViewById(R.id.dueAssmtAlertCbx);
 
     ArrayAdapter<CharSequence> spinnerAdapter =
             ArrayAdapter.createFromResource(this, R.array.assessmentTypes, android.R.layout.simple_spinner_item);
@@ -90,6 +114,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
       currentCourse = mDataSource.getCourseById(Integer.toString(courseId));
       currentCourse.moveToFirst();
       courseTitle = currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME));
+
       setTitle( courseTitle + " Assessments");
       populateAssmtData();
     }else{
@@ -103,9 +128,25 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     currentAssmt.moveToFirst();
 
     assmtTitle = currentAssmt.getString(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_NAME));
+
+    startCbxSelection = currentAssmt.getInt(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_START_ALERT));
+    dueCbxSelection = currentAssmt.getInt(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_DUE_ALERT));
+
+    if(startCbxSelection == 1){
+      startAssmtAlertCbx.setChecked(true);
+    }else if(startCbxSelection == 0){
+      startAssmtAlertCbx.setChecked(false);
+    }
+
+    if(dueCbxSelection == 1){
+      dueAssmtAlertCbx.setChecked(true);
+    }else if(dueCbxSelection == 0){
+      dueAssmtAlertCbx.setChecked(false);
+    }
+
     assmtTitleFld.setText(assmtTitle);
     dueDateFld.setText(currentAssmt.getString(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_DUE)));
-    goalDateFld.setText(currentAssmt.getString(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_GOAL)));
+    startAssmtDateFld.setText(currentAssmt.getString(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_START)));
     assessmentTypeSpinner.setSelection(currentAssmt.getInt(currentAssmt.getColumnIndex(AssessmentTable.ASSESSMENT_TYPE)));
   }
 
@@ -178,7 +219,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
       return false;
     }
 
-    if (goalDateFld.getText().length() == 0) {
+    if (startAssmtDateFld.getText().length() == 0) {
 
       final AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
       myAlertDialog.setTitle("Missing goal date");
@@ -209,23 +250,98 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   public void saveAssessment(View view) {
 
+    String title = assmtTitleFld.getText().toString();
+    String dueDate = dueDateFld.getText().toString();
+    String startDate = startAssmtDateFld.getText().toString();
+
     if (isValidData()){
-      Assessment assessment = new Assessment(assmtTitleFld.getText().toString(),
-              dueDateFld.getText().toString(),
-              goalDateFld.getText().toString(),
+      Assessment assessment = new Assessment(title,dueDate,startDate,
               assessmentTypeSpinner.getSelectedItemPosition(),
-              courseId);
+              courseId, startCbxSelection, dueCbxSelection);
 
       if(isNewAssmt){
         mDataSource.insertAssessment(assessment);
+
+        int assessmentId = mDataSource.getMaxAssessmentId();
+
+        if(startAssmtAlertCbx.isChecked()){
+          createNewAlert(courseId, assessmentId,
+                    "Assessment " + title + " starts soon!",
+                   title + " starts on " + startDate,
+                          AlertTable.ALERT_ASSESSMENT_START,
+                          LocalDateTime.of(chosenStartAlertDate, chosenStartAlertTime));
+        }
+
+        if (dueAssmtAlertCbx.isChecked()) {
+          createNewAlert(courseId, assessmentId,
+                    "Assessment " + title + " due soon!",
+                  title + " due on " + dueDate,
+                         AlertTable.ALERT_ASSESSMENT_END,
+                         LocalDateTime.of(chosenDueAlertDate,chosenDueAlertTime));
+        }
+
       }else{
         mDataSource.updateAssessment(assessment, Integer.toString(assmtId));
+
+        if(startAssmtAlertCbx.isChecked()){
+          createNewAlert(courseId, assmtId,
+                  "Assessment " + title + " starts soon!",
+                  title + " starts on " + startDate,
+                  AlertTable.ALERT_ASSESSMENT_START,
+                  LocalDateTime.of(chosenStartAlertDate, chosenStartAlertTime));
+        }else{
+          cancelAlert(AlertTable.ALERT_ASSESSMENT_START);
+        }
+
+        if (dueAssmtAlertCbx.isChecked()) {
+          createNewAlert(courseId, assmtId,
+                  "Assessment " + title + " due soon!",
+                  title + " due on " + dueDate,
+                  AlertTable.ALERT_ASSESSMENT_END,
+                  LocalDateTime.of(chosenDueAlertDate,chosenDueAlertTime));
+        }else{
+          cancelAlert(AlertTable.ALERT_ASSESSMENT_END);
+        }
       }
 
       setResult(RESULT_OK);
       finish();
     }
 
+  }
+
+  public void createNewAlert(int courseId, int assessmentId, String title, String content, String alertType, LocalDateTime chosenDateTime){
+
+    //creating alert record and then retrieving its ID
+    Alert alert = new Alert(courseId, alertType, assessmentId);
+    mDataSource.insertAlert(alert);
+    int alertId = mDataSource.getMaxAlertId();
+    Log.d(TAG, "newAlertId: " + alertId + " localDateTime: " + chosenDateTime);
+
+    ZonedDateTime zonedDateTime = chosenDateTime.atZone(ZoneId.systemDefault());
+    long millis = zonedDateTime.toInstant().toEpochMilli();
+    Log.d(TAG, "millis: " + millis);
+
+    Intent intent = new Intent(EditAssmtActivity.this, NotificationReceiver.class);
+    intent.putExtra("title",title);
+    intent.putExtra("content", content);
+    PendingIntent p1= PendingIntent.getBroadcast(getApplicationContext(), alertId, intent,0);
+    AlarmManager a= (AlarmManager) getSystemService(ALARM_SERVICE);
+    a.set(AlarmManager.RTC,millis,p1);
+  }
+
+  private void cancelAlert(String alertType) {
+    Cursor alertCursor = mDataSource.getAlertByCourseAssmtAndType(
+            Integer.toString(courseId), Integer.toString(assmtId), alertType);
+    while(alertCursor.moveToNext()){
+      int alertId = alertCursor.getInt(alertCursor.getColumnIndex(AlertTable.ALERT_ID));
+      AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+      Intent myIntent = new Intent(getApplicationContext(), NotificationReceiver.class);
+      PendingIntent pendingIntent = PendingIntent.getBroadcast(
+              getApplicationContext(), alertId, myIntent, 0);
+
+      alarmManager.cancel(pendingIntent);
+    }
   }
 
   @Override
@@ -244,7 +360,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     datePicker.show(getSupportFragmentManager(), "date picker");
   }
 
-  public void setGoalDate(View view) {
+  public void setStartDate(View view) {
     isGoalPicker = true;
     DialogFragment datePicker = new DatePickerFragment();
     datePicker.show(getSupportFragmentManager(), "date picker");
@@ -258,10 +374,23 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     String currentDateString = currentDate.format(dateFormat);
 
     if(isGoalPicker){
-      goalDateFld.setText(currentDateString);
+      startAssmtDateFld.setText(currentDateString);
     }else{
       dueDateFld.setText(currentDateString);
     }
+
+    if(isStartCbx){
+      chosenStartAlertDate = LocalDate.of(year,month,dayOfMonth);
+      DialogFragment timePickerDialog = new TimePickerFragment();
+      timePickerDialog.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    if (isDueCbx) {
+      chosenDueAlertDate = LocalDate.of(year,month,dayOfMonth);
+      DialogFragment timePickerDialog = new TimePickerFragment();
+      timePickerDialog.show(getSupportFragmentManager(), "timePicker");
+    }
+
   }
 
   @Override
@@ -271,5 +400,44 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
       inflater.inflate(R.menu.edit_assessment_menu, menu);
     }
     return true;
+  }
+
+  public void chooseAlertStart(View view) {
+    if(startAssmtAlertCbx.isChecked()){
+      startCbxSelection = 1;
+      isStartCbx = true;
+      DialogFragment datePicker = new DatePickerFragment();
+      datePicker.show(getSupportFragmentManager(), "date picker");
+    }else{
+      startCbxSelection = 0;
+      cancelAlert(AlertTable.ALERT_ASSESSMENT_START);
+    }
+  }
+
+  public void chooseDueEnd(View view) {
+    if(dueAssmtAlertCbx.isChecked()){
+      dueCbxSelection = 1;
+      isDueCbx = true;
+      DialogFragment datePicker = new DatePickerFragment();
+      datePicker.show(getSupportFragmentManager(), "date picker");
+    }else{
+      dueCbxSelection = 0;
+      cancelAlert(AlertTable.ALERT_ASSESSMENT_END);
+    }
+  }
+
+  @Override
+  public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+    if(isStartCbx){
+      chosenStartAlertTime = LocalTime.of(hour,minute);
+      isStartCbx = false;
+    }
+
+    if(isDueCbx){
+      chosenDueAlertTime = LocalTime.of(hour,minute);
+      isDueCbx = false;
+    }
+
+
   }
 }

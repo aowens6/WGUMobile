@@ -439,7 +439,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   public void createNewAlert(int courseId, String title, String content, String alertType, LocalDateTime chosenDateTime){
 
     //creating alert record and then retrieving its ID
-    Alert alert = new Alert(courseId, alertType);
+    Alert alert = new Alert(courseId, alertType, 0);
     mDataSource.insertAlert(alert);
     int alertId = mDataSource.getMaxAlertId();
     Log.d(TAG, "newAlertId: " + alertId + " localDateTime: " + chosenDateTime);
