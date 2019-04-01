@@ -1,7 +1,5 @@
 package com.example.aowenswgumobile;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,7 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.aowenswgumobile.database.DataSource;
-import com.example.aowenswgumobile.util.NotificationReceiver;
 
 import java.time.format.DateTimeFormatter;
 

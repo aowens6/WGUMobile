@@ -1,12 +1,6 @@
 package com.example.aowenswgumobile.database;
 
-import android.net.Uri;
-
 public class CourseTable {
-
-  private static final String AUTHORITY = "com.example.aowenswgumobile";
-  private static final String BASE_PATH = "courses";
-  public static final Uri COURSE_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH );
 
   public static final String TABLE_COURSES = "courses";
   public static final String COURSE_ID = "_id";

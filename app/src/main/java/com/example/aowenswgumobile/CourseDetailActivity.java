@@ -2,7 +2,6 @@ package com.example.aowenswgumobile;
 
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -14,7 +13,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,16 +35,11 @@ import com.example.aowenswgumobile.database.NotesTable;
 import com.example.aowenswgumobile.database.TermsTable;
 import com.example.aowenswgumobile.util.NotificationReceiver;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-import java.util.Calendar;
 
 import model.Alert;
 import model.Course;
@@ -83,14 +76,12 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   private LocalDate chosenDate;
   private String chosenDateString;
   private LocalTime chosenTime;
-  private String chosenTimeString;
   private LocalDate chosenStartDate;
   private LocalDate chosenEndDate;
   private LocalTime chosenStartTime;
   private LocalTime chosenEndTime;
 
   private static final int COURSE_DETAIL_REQUEST_CODE = 1005;
-  private static final String TAG = "CourseDetail";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -229,7 +220,6 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   @Override
   public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-    Log.d(TAG, "progress: " + position);
     mDataSource.updateCourseStatus(Integer.toString(courseId), position);
   }
 
@@ -240,11 +230,7 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
 
   @Override
   public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-//    Calendar c = Calendar.getInstance();
-//    c.set(Calendar.YEAR, year);
-//    c.set(Calendar.MONTH, month);
-//    c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//    String currentDateString = dateFormat.format((TemporalAccessor) c.getTime());
+
     month++;
 
     chosenDate = LocalDate.of(year, month, dayOfMonth);
@@ -386,14 +372,12 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
           createNewAlert(newCourseId,courseTitle + " starting soon!",
                   courseTitle + " starting on " + startDate, AlertTable.ALERT_COURSE_START,
                   LocalDateTime.of(chosenStartDate, chosenStartTime));
-          Log.d(TAG, "START: chosenDate: " + chosenStartDate + " chosenTime: " + chosenStartTime);
         }
 
         if(endCourseAlertCbx.isChecked()){
           createNewAlert(newCourseId,courseTitle + " ending soon!",
                   courseTitle + " ending on " + endDate, AlertTable.ALERT_COURSE_END,
                   LocalDateTime.of(chosenEndDate, chosenEndTime));
-          Log.d(TAG, "END: chosenDate: " + chosenEndDate + " chosenTime: " + chosenEndTime);
         }
 
       }else{
@@ -442,11 +426,9 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     Alert alert = new Alert(courseId, alertType, 0);
     mDataSource.insertAlert(alert);
     int alertId = mDataSource.getMaxAlertId();
-    Log.d(TAG, "newAlertId: " + alertId + " localDateTime: " + chosenDateTime);
 
     ZonedDateTime zonedDateTime = chosenDateTime.atZone(ZoneId.systemDefault());
     long millis = zonedDateTime.toInstant().toEpochMilli();
-    Log.d(TAG, "millis: " + millis);
 
     Intent intent = new Intent(CourseDetailActivity.this, NotificationReceiver.class);
     intent.putExtra("title",title);

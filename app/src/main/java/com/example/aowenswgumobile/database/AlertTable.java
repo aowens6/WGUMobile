@@ -1,12 +1,6 @@
 package com.example.aowenswgumobile.database;
 
-import android.net.Uri;
-
 public class AlertTable {
-
-  private static final String AUTHORITY = "com.example.aowenswgumobile";
-  private static final String BASE_PATH = "alerts";
-  public static final Uri ALERT_CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH );
 
   public static final String TABLE_ALERTS = "alerts";
   public static final String ALERT_ID = "_id";

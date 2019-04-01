@@ -57,10 +57,6 @@ public class DataSource {
             TermsTable.TERM_ID + "=" + termId, null);
   }
 
-  public int getTermsCount(){
-    return (int) DatabaseUtils.queryNumEntries(mDatabase, TermsTable.TABLE_TERMS);
-  }
-
   public void deleteTerm(int termId){
     mDatabase.delete(TermsTable.TABLE_TERMS, TermsTable.TERM_ID + "=" + termId, null);
   }
@@ -102,20 +98,6 @@ public class DataSource {
   public void updateCourseTerm(String courseId, int termId){
     ContentValues values = new ContentValues();
     values.put(CourseTable.COURSE_TERM_ID, termId);
-    mDatabase.update(CourseTable.TABLE_COURSES, values,
-            CourseTable.COURSE_ID + "=" + courseId, null);
-  }
-
-  public void updateCourseStart(String courseId, String startDate){
-    ContentValues values = new ContentValues();
-    values.put(CourseTable.COURSE_START, startDate);
-    mDatabase.update(CourseTable.TABLE_COURSES, values,
-            CourseTable.COURSE_ID + "=" + courseId, null);
-  }
-
-  public void updateCourseEnd(String courseId, String endDate){
-    ContentValues values = new ContentValues();
-    values.put(CourseTable.COURSE_END, endDate);
     mDatabase.update(CourseTable.TABLE_COURSES, values,
             CourseTable.COURSE_ID + "=" + courseId, null);
   }

@@ -15,9 +15,6 @@ public class Assessment {
   private int startAlert;
   private int dueAlert;
 
-  public Assessment() {
-  }
-
   public Assessment(String assessmentName, String dueDate,
                     String startDate, int typeCode,
                     int courseId, int startAlert, int dueAlert) {

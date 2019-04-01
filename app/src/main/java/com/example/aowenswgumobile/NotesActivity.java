@@ -4,11 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,10 +22,8 @@ import android.widget.Toast;
 import com.example.aowenswgumobile.database.CourseTable;
 import com.example.aowenswgumobile.database.DataSource;
 import com.example.aowenswgumobile.database.NotesTable;
-import com.example.aowenswgumobile.database.TermsTable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class NotesActivity extends AppCompatActivity {
 
@@ -38,7 +35,6 @@ public class NotesActivity extends AppCompatActivity {
   private String courseName;
   private ArrayList<String> notesArray = new ArrayList<>();
   private FloatingActionButton emailNotesFAB;
-  private static final String TAG = "NotesActivity";
   private static final int NOTE_REQUEST_CODE = 1006;
 
   @Override

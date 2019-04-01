@@ -3,9 +3,8 @@ package com.example.aowenswgumobile;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
@@ -14,7 +13,6 @@ import android.widget.SimpleCursorAdapter;
 import com.example.aowenswgumobile.database.CourseTable;
 import com.example.aowenswgumobile.database.DataSource;
 import com.example.aowenswgumobile.database.MentorTable;
-import com.example.aowenswgumobile.database.TermsTable;
 
 public class MentorActivity extends AppCompatActivity {
 
@@ -22,7 +20,6 @@ public class MentorActivity extends AppCompatActivity {
   private int courseId;
   private int mentorCode;
   private Cursor currentCourse;
-  private static final String TAG = "MentorActivity";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

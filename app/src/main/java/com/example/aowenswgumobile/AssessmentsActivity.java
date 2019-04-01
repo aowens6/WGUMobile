@@ -2,22 +2,16 @@ package com.example.aowenswgumobile;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import com.example.aowenswgumobile.database.AssessmentTable;
-import com.example.aowenswgumobile.database.CourseTable;
 import com.example.aowenswgumobile.database.DataSource;
-import com.example.aowenswgumobile.database.TermsTable;
 
 import model.AssessmentCursorAdapter;
 
@@ -27,8 +21,8 @@ public class AssessmentsActivity extends AppCompatActivity {
   private Bundle extras;
   private int courseId;
   private ListView assmtLV;
-  private static final String TAG = "AssessmentsActivity";
   private static final int ASSMT_REQUEST_CODE = 1007;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -46,7 +40,6 @@ public class AssessmentsActivity extends AppCompatActivity {
 
     if (extras != null) {
       courseId = extras.getInt("courseId");
-      Log.d(TAG, "onCreate: courseId: " + courseId);
     }
 
     assmtLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -69,7 +62,6 @@ public class AssessmentsActivity extends AppCompatActivity {
     CursorAdapter assmtCursorAdapter = new AssessmentCursorAdapter(this, cursor, 0);
 
     assmtLV.setAdapter(assmtCursorAdapter);
-    Log.d(TAG, "populateAssessmentLV: POPULATE CALLED");
   }
 
   public void addAssessment(View view) {

@@ -3,15 +3,14 @@ package com.example.aowenswgumobile;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -22,19 +21,15 @@ import com.example.aowenswgumobile.database.CourseTable;
 import com.example.aowenswgumobile.database.DataSource;
 import com.example.aowenswgumobile.database.TermsTable;
 
-import java.util.Calendar;
-
 public class TermDetailActivity extends AppCompatActivity
         implements AdapterView.OnItemSelectedListener{
 
-  DataSource mDataSource;
-  CursorAdapter termCourseCursorAdapter;
-  ListView termCourseList;
-  TextView startDate;
-  TextView endDate;
-  Cursor currentTerm;
-  Calendar calendar;
-  private Button deleteTermBtn;
+  private DataSource mDataSource;
+  private CursorAdapter termCourseCursorAdapter;
+  private ListView termCourseList;
+  private TextView startDate;
+  private TextView endDate;
+  private Cursor currentTerm;
   private int termId;
   private static final int TERM_REQUEST_CODE = 1002;
   private static final String TAG = "termActivity";
@@ -72,13 +67,6 @@ public class TermDetailActivity extends AppCompatActivity
       }
     });
 
-//    deleteTermBtn = findViewById(R.id.deleteTermBtn);
-//
-//    if(termCourseList.getAdapter().getCount() == 0){
-//      deleteTermBtn.setVisibility(View.VISIBLE);
-//    }else{
-//      deleteTermBtn.setVisibility(View.GONE);
-//    }
   }
 
   private void populateTermData() {

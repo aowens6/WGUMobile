@@ -24,13 +24,12 @@ import model.Note;
 public class EditNoteActivity extends AppCompatActivity {
 
   private DataSource mDataSource;
-  private String noteText;
   private int noteId;
   private int courseId;
   private boolean newNote;
   private EditText noteTextFld;
   private FloatingActionButton deleteNoteFAB;
-  private static final String TAG = "EditNotesActivity";
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -51,7 +50,6 @@ public class EditNoteActivity extends AppCompatActivity {
       if(noteId == 0){
         newNote = true;
       }
-      Log.d(TAG, "noteId: " + noteId + " courseId: " + courseId);
     }
 
     if(newNote){
@@ -64,8 +62,6 @@ public class EditNoteActivity extends AppCompatActivity {
       noteTextFld.setText(currentNote.getString(currentNote.getColumnIndex(NotesTable.NOTE_TEXT)));
       noteTextFld.setSelection(noteTextFld.length());
     }
-
-//    Log.d(TAG, "onCreate: newNote" + courseUri.toString());
   }
 
   @Override
