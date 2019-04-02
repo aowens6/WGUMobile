@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -67,6 +68,9 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
   private CheckBox startCourseAlertCbx;
   private CheckBox endCourseAlertCbx;
   private Spinner statusSpinner;
+  private Button notesBtn;
+  private Button mentorsBtn;
+  private Button assessmentsBtn;
   private FloatingActionButton pendingFAB;
   private boolean isStartDatePicker;
   private boolean isEndDatePicker;
@@ -100,6 +104,10 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
     startCourseAlertCbx = findViewById(R.id.startCourseAlertCbx);
     endCourseAlertCbx = findViewById(R.id.endCourseAlertCbx);
     statusSpinner = findViewById(R.id.statusSpinner);
+
+    mentorsBtn = findViewById(R.id.mentorsBtn);
+    notesBtn = findViewById(R.id.notesBtn);
+    assessmentsBtn = findViewById(R.id.assessmentsBtn);
 
     pendingFAB = findViewById(R.id.pendingFAB);
 
@@ -136,6 +144,11 @@ implements AdapterView.OnItemSelectedListener, DatePickerDialog.OnDateSetListene
       if(courseId == 0){
         isNewCourse = true;
         setTitle("Add new course");
+        notesBtn.setVisibility(View.GONE);
+        mentorsBtn.setVisibility(View.GONE);
+        assessmentsBtn.setVisibility(View.GONE);
+        startCourseAlertCbx.setVisibility(View.GONE);
+        endCourseAlertCbx.setVisibility(View.GONE);
       }else{
         currentCourse = mDataSource.getCourseById(Integer.toString(courseId));
 

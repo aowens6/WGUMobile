@@ -10,6 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".EditMentorActivity"
+            android:parentActivityName=".MentorActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.aowenswgumobile.MentorActivity" />
+        </activity>
+        <activity
             android:name=".TermActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -81,7 +88,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".util.NotificationReceiver"/>
+        <receiver android:name=".util.NotificationReceiver" />
     </application>
 
 </manifest>

@@ -65,7 +65,7 @@ public class AssessmentsActivity extends AppCompatActivity {
   }
 
   public void addAssessment(View view) {
-    int assessmentCount = mDataSource.getAssessmentCount();
+    int assessmentCount = mDataSource.getAssessmentCount(Integer.toString(courseId));
     if(assessmentCount < 5){
       Intent intent = new Intent(AssessmentsActivity.this, EditAssmtActivity.class);
       intent.putExtra("courseId", courseId);

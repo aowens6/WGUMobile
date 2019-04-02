@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -20,6 +22,8 @@ public class MentorActivity extends AppCompatActivity {
   private int courseId;
   private int mentorCode;
   private Cursor currentCourse;
+  private ListView mentorList;
+  private static final int MENTOR_REQUEST_CODE = 1009;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +37,8 @@ public class MentorActivity extends AppCompatActivity {
 
     Uri uri = intent.getParcelableExtra(MentorTable.CONTENT_ITEM_TYPE);
 
+    mentorList = findViewById(R.id.mentorList);
+
     courseId = Integer.parseInt(uri.getLastPathSegment());
 
     currentCourse = mDataSource.getCourseById(Integer.toString(courseId));
@@ -41,6 +47,28 @@ public class MentorActivity extends AppCompatActivity {
     mentorCode = currentCourse.getInt(currentCourse.getColumnIndex(CourseTable.COURSE_MENTOR_CODE));
 
     setTitle("Mentors for " + currentCourse.getString(currentCourse.getColumnIndex(CourseTable.COURSE_NAME)));
+
+//    notesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//      @Override
+//      public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+//        Intent intent = new Intent(NotesActivity.this, EditNoteActivity.class);
+//        intent.putExtra("noteId", id);
+//        intent.putExtra("courseId", courseId);
+//        startActivityForResult(intent, NOTE_REQUEST_CODE);
+//
+//      }
+//    });
+
+    mentorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Intent intent = new Intent(MentorActivity.this, EditMentorActivity.class);
+        intent.putExtra("mentorId", ((int) id));
+        intent.putExtra("courseId", courseId);
+        intent.putExtra("mentorCode", mentorCode);
+        startActivityForResult(intent, MENTOR_REQUEST_CODE);
+      }
+    });
 
     populateMentorLV();
 
@@ -72,4 +100,18 @@ public class MentorActivity extends AppCompatActivity {
     super.onBackPressed();
   }
 
+  public void addMentor(View view) {
+    Intent intent = new Intent(MentorActivity.this, EditMentorActivity.class);
+    intent.putExtra("mentorId", 0);
+    intent.putExtra("courseId", courseId);
+    intent.putExtra("mentorCode", mentorCode);
+    startActivityForResult(intent, MENTOR_REQUEST_CODE);
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == MENTOR_REQUEST_CODE && resultCode == RESULT_OK) {
+      populateMentorLV();
+    }
+  }
 }

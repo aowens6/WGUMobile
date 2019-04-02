@@ -99,7 +99,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginTop="232dp"
         android:onClick="viewMentors"
         android:text="Mentors"
         app:layout_constraintStart_toStartOf="parent"
@@ -120,8 +120,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="192dp"
-        android:text="Assessments"
         android:onClick="viewAssessments"
+        android:text="Assessments"
         app:layout_constraintBaseline_toBaselineOf="@+id/notesBtn"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -176,23 +176,23 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:onClick="chooseAlertStart"
         android:text="Start Date Alert"
         app:layout_constraintStart_toStartOf="parent"
-        android:onClick="chooseAlertStart"
-        app:layout_constraintTop_toBottomOf="@+id/mentorsBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <CheckBox
         android:id="@+id/endCourseAlertCbx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:checked="false"
         android:onClick="chooseAlertEnd"
         android:text="End Date Alert"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.117"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/startCourseAlertCbx"
-        app:layout_constraintTop_toBottomOf="@+id/assessmentsBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/statusSpinner" />
 
 </android.support.constraint.ConstraintLayout>

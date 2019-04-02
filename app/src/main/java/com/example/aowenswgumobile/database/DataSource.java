@@ -164,9 +164,26 @@ public class DataSource {
     mDatabase.insert(MentorTable.TABLE_MENTORS, null, values);
   }
 
+  public void updateMentor(Mentor mentor, String mentorId){
+    ContentValues values = mentor.toValues();
+    mDatabase.update(MentorTable.TABLE_MENTORS,values,
+            MentorTable.MENTOR_ID + "=" + mentorId, null);
+  }
+
+  public void deleteMentor(String mentorId){
+    mDatabase.delete(MentorTable.TABLE_MENTORS,MentorTable.MENTOR_ID + "=" + mentorId,null);
+  }
+
   public Cursor getMentorsByCode(String mentorCode){
     Cursor c = mDatabase.query(MentorTable.TABLE_MENTORS, MentorTable.ALL_MENTOR_COLUMNS,
             MentorTable.MENTOR_CODE + "=" + mentorCode, null, null, null, null);
+    return c;
+  }
+
+  public Cursor getMentorById(String mentorId){
+    Cursor c = mDatabase.query(MentorTable.TABLE_MENTORS, MentorTable.ALL_MENTOR_COLUMNS,
+            MentorTable.MENTOR_ID + "=" + mentorId,
+            null, null,null,null);
     return c;
   }
 
@@ -261,8 +278,9 @@ public class DataSource {
             AssessmentTable.ASSESSMENT_ID + "=" + assessmentId, null);
   }
 
-  public int getAssessmentCount(){
-    return (int) DatabaseUtils.queryNumEntries(mDatabase, AssessmentTable.TABLE_ASSESSMENTS);
+  public int getAssessmentCount(String courseId){
+    return (int) DatabaseUtils.queryNumEntries(mDatabase, AssessmentTable.TABLE_ASSESSMENTS,
+            AssessmentTable.ASSESSMENT_COURSE_ID + "=" + courseId);
   }
 
   public int getMaxAssessmentId(){
